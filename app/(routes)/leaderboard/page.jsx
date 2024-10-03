@@ -98,10 +98,12 @@ const Leaderboard = () => {
 
   if (userLoading || loadingTopUsers) {
     return (
-      <main className="p-4">
-        <h1 className="text-2xl font-bold mb-4">User Data</h1>
-        <p>Loading...</p>
-      </main>
+      <div className="flex gap-2 flex-col justify-center items-center min-h-svh bg-white">
+      <Image src={ChickenImg} alt="chicken" width={150} height={150}/>
+      <div className="w-4em">
+      <TrophySpin color="#32cd32" size="medium" text="" textColor="" />
+      </div>
+    </div>
     );
   }
 
