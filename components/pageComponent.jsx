@@ -137,36 +137,34 @@ const PageComponent = () => {
                     {notification}
                   </div>
                 )}
-                <div className="mt-4">
-                  <h2 className="text-xl font-semibold">
-                    Task: Join the community!
-                  </h2>
-                  <p className="mb-2">Complete the task to earn 200 points.</p>
-                  <a
-                    href="https://t.me/cocks_community"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <button
-                      onClick={handleCompleteTask}
-                      disabled={user.taskCompleted} // Disable the button if the task is completed
-                      className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ${
-                        user.taskCompleted
-                          ? "opacity-50 cursor-not-allowed"
-                          : ""
-                      }`}
-                    >
-                      {user.taskCompleted ? "Task Completed" : "Complete Task"}
-                    </button>
-                  </a>
-                </div>
-
-                {notification && (
-                  <div className="mt-4 p-2 bg-green-100 text-green-700 rounded">
-                    {notification}
-                  </div>
-                )}
               </div>
+              <div className="mt-4">
+                <h2 className="text-xl font-semibold">
+                  Task: Join the community!
+                </h2>
+                <p className="mb-2">Complete the task to earn 200 points.</p>
+                <a
+                  href="https://t.me/cocks_community"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <button
+                    onClick={handleCompleteTask}
+                    disabled={user.taskCompleted} // Disable the button if the task is completed
+                    className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ${
+                      user.taskCompleted ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                  >
+                    {user.taskCompleted ? "Task Completed" : "Complete Task"}
+                  </button>
+                </a>
+              </div>
+
+              {notification && (
+                <div className="mt-4 p-2 bg-green-100 text-green-700 rounded">
+                  {notification}
+                </div>
+              )}
             </div>
           </section>
         </div>
