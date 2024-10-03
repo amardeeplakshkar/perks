@@ -1,5 +1,6 @@
 import Script from "next/script";
 import "./globals.css";
+import Footer from "../components/Footer";
 
 export const metadata = {
   title: "Create Next App",
@@ -9,11 +10,13 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-        className={`antialiased`}
-      >
-      <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
-        {children}
+      <body className="bg-black">
+        <Script
+          src="https://telegram.org/js/telegram-web-app.js"
+          strategy="beforeInteractive"
+        />
+        <div className="h-dvh">{children}</div>
+        <Footer />
       </body>
     </html>
   );

@@ -1,24 +1,27 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { TrophySpin } from "react-loading-indicators";
+import ChickenImg from "../app/giphy.gif"
 
 const PageComponent = () => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
-  const [notification, setNotification] = useState('');
+  const [notification, setNotification] = useState("");
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
+    if (typeof window !== "undefined" && window.Telegram?.WebApp) {
       const tg = window.Telegram.WebApp;
       tg.ready();
 
       const initDataUnsafe = tg.initDataUnsafe || {};
 
       if (initDataUnsafe.user) {
-        fetch('/api/user', {
-          method: 'POST',
+        fetch("/api/user", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(initDataUnsafe.user),
         })
@@ -31,13 +34,13 @@ const PageComponent = () => {
             }
           })
           .catch((err) => {
-            setError('Failed to fetch user data: ' + err);
+            setError("Failed to fetch user data: " + err);
           });
       } else {
-        setError('No user data available');
+        setError("No user data available");
       }
     } else {
-      setError('This app should be opened in Telegram');
+      setError("This app should be opened in Telegram");
     }
   }, []);
 
@@ -45,22 +48,22 @@ const PageComponent = () => {
     if (!user) return;
 
     try {
-      const res = await fetch('/api/complete-task', {
-        method: 'POST',
+      const res = await fetch("/api/complete-task", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ telegramId: user.telegramId }), // Send telegramId to mark task as completed
       });
       const data = await res.json();
       if (data.success) {
         setUser({ ...user, points: data.points, taskCompleted: true }); // Update user points and mark task as completed
-        setNotification('Task completed successfully! You earned 200 points.');
+        setNotification("Task completed successfully! You earned 200 points.");
       } else {
-        setError(data.error || 'Failed to complete task'); // Show error message if the task is already completed
+        setError(data.error || "Failed to complete task"); // Show error message if the task is already completed
       }
     } catch (err) {
-      setError('An error occurred while completing the task: ' + err);
+      setError("An error occurred while completing the task: " + err);
     }
   };
 
@@ -68,9 +71,18 @@ const PageComponent = () => {
     return <div className="container mx-auto p-4 text-red-500">{error}</div>;
   }
 
-  if (!user) return <div className="container mx-auto p-4">Loading...</div>;
+  if (!user)
+    return (
+      <div className="flex gap-2 flex-col justify-center items-center min-h-svh bg-white">
+        <Image src={ChickenImg} alt="chicken" width={150} height={150}/>
+        <div className="w-4em">
+        <TrophySpin color="#32cd32" size="medium" text="" textColor="" />
+        </div>
+      </div>
+    );
 
   return (
+    <>
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Welcome, {user.firstName}!</h1>
       <p>Your current points: {user.points}</p>
@@ -86,9 +98,11 @@ const PageComponent = () => {
           <button
             onClick={handleCompleteTask}
             disabled={user.taskCompleted} // Disable the button if the task is completed
-            className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ${user.taskCompleted ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ${
+              user.taskCompleted ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
-            {user.taskCompleted ? 'Task Completed' : 'Complete Task'}
+            {user.taskCompleted ? "Task Completed" : "Complete Task"}
           </button>
         </a>
       </div>
@@ -99,6 +113,7 @@ const PageComponent = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 
