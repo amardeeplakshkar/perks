@@ -1,8 +1,8 @@
-import PageComponent from '../components/pageComponent'
+import Page from "../components/WelcomeSlider";
 export default function Home() {
   return (
     <>
-    <PageComponent/>
+      <Page />
     </>
   );
 }
