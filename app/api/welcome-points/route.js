@@ -1,20 +1,27 @@
+// app/api/welcome-points/route.js
+import { NextResponse } from "next/server";
 import { prisma } from "../../../lib/prisma";
 
-export default async function handler(req, res) {
-  const { telegramId } = req.body;
-
+export async function POST(req) {
   try {
+    const { telegramId, points } = await req.json();
+
+    if (!telegramId || !points) {
+      return NextResponse.json({ error: "Invalid data" }, { status: 400 });
+    }
+
+    // Update the user's points
     await prisma.user.update({
       where: { telegramId },
-      data: {
-        points: { increment: 500 }, // Add welcome points
-        isNewUser: false, // Mark the user as not new anymore
-      },
+      data: { points: { increment: points } },
     });
 
-    res.status(200).json({ success: true });
+    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error granting welcome points" });
+    console.error("Error giving welcome points:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }
