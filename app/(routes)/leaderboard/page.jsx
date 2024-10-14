@@ -116,7 +116,7 @@ const Leaderboard = () => {
           bg={"bg-white/10"}
           rank="⭐" // Current user's rank symbol (or adjust as needed)
           amount={user.points} // Current user's points
-          username={user.username || "N/A"}
+          username={user.firstName || "🐓Cocks User"}
         />
         {notification && <p className="text-green-500">{notification}</p>}
       </div>
