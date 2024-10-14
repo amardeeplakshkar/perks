@@ -4,7 +4,6 @@ import { FaCheck, FaHandPointer } from "react-icons/fa";
 import { TrophySpin } from "react-loading-indicators";
 import ChickenImg from "../app/giphy.gif";
 import Image from "next/image";
-import { Prisma } from "@prisma/client";
 
 const TaskCard = () => {
   const [user, setUser] = useState(null);
@@ -13,45 +12,45 @@ const TaskCard = () => {
   const [tasks, setTasks] = useState([
     {
       id: 1,
-      name: "Check Blum Telegram",
-      points: 90,
+      name: "Check COCKS Telegram",
+      points: 500,
       completed: false,
       path: "https://t.me/cocks_community",
     },
     {
       id: 2,
-      name: "Check Blum Instagram",
-      points: 90,
+      name: "Check COCKS Instagram",
+      points: 250,
       completed: false,
-      path: "https://t.me/cocks_community",
+      path: "https://instagram.com/cocks_community",
     },
     {
       id: 3,
-      name: "Check Blum X",
-      points: 90,
+      name: "Check COCKS X",
+      points: 250,
       completed: false,
-      path: "https://t.me/cocks_community",
+      path: "https://x.com/cocks_community",
     },
     {
       id: 4,
-      name: "Check Blum Facebook",
-      points: 90,
+      name: "Check COCKS Facebook",
+      points: 250,
       completed: false,
-      path: "https://t.me/cocks_community",
+      path: "https://facebook.com/cocks_community",
     },
     {
       id: 5,
-      name: "Check Blum Discord",
-      points: 90,
+      name: "Check COCKS Discord",
+      points: 250,
       completed: false,
       path: "https://t.me/cocks_community",
     },
     {
       id: 6,
-      name: "Check Blum YouTube",
-      points: 90,
+      name: "Check COCKS YouTube",
+      points: 250,
       completed: false,
-      path: "https://t.me/cocks_community",
+      path: "https://youtube.com/cocks_community",
     },
   ]);
 
