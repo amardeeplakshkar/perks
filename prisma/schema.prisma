@@ -19,7 +19,6 @@ model User {
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
 
-  // Relation to completed tasks via TaskCompletion model
   taskCompletions TaskCompletion[]
 }
 
@@ -31,18 +30,16 @@ model Task {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Relation to task completions
   completions TaskCompletion[]
 }
 
 model TaskCompletion {
-   id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   userId    String   @db.ObjectId
- taskId  Int
+  taskId    String   @db.ObjectId  // Changed to match Task model's `id` type
   completed Boolean
   createdAt DateTime @default(now())
 
-  // Relations to User and Task models
-  User    User    @relation(fields: [userId], references: [id])
-  task Task @relation(fields: [taskId], references: [id])
+  User User @relation(fields: [userId], references: [id])
+  Task Task @relation(fields: [taskId], references: [id])
 }
