@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from "react";
 import Card from "../../../components/Card";
 import useUserData from "../../../components/hooks/useUserData";
-import Image from 'next/image'; // Ensure you import Image if using Next.js Image component
+import Image from "next/image";
 import { TrophySpin } from "react-loading-indicators";
-import ChickenImg from "../../../app/giphy.gif"
+import ChickenImg from "../../../app/giphy.gif";
 
 const Leaderboard = () => {
   const { loading: userLoading } = useUserData();
@@ -18,9 +18,9 @@ const Leaderboard = () => {
   useEffect(() => {
     const fetchTopUsers = async () => {
       try {
-        const response = await fetch('/api/leaderboard');
+        const response = await fetch("/api/leaderboard");
         if (!response.ok) {
-          throw new Error('Failed to fetch top users');
+          throw new Error("Failed to fetch top users");
         }
         const data = await response.json();
         setTopUsers(data);
@@ -69,14 +69,27 @@ const Leaderboard = () => {
     }
   }, []);
 
+  const getRankEmoji = (index) => {
+    switch (index) {
+      case 0:
+        return "🥇"; // 1st place emoji
+      case 1:
+        return "🥈"; // 2nd place emoji
+      case 2:
+        return "🥉"; // 3rd place emoji
+      default:
+        return `#${index + 1}`; // Rank number for others
+    }
+  };
+
   if (userLoading || loadingTopUsers) {
     return (
       <div className="flex gap-2 flex-col justify-center items-center min-h-svh bg-white">
-      <Image src={ChickenImg} alt="chicken" width={150} height={150}/>
-      <div className="w-4em">
-      <TrophySpin color="#32cd32" size="medium" text="" textColor="" />
+        <Image src={ChickenImg} alt="chicken" width={150} height={150} />
+        <div className="w-4em">
+          <TrophySpin color="#32cd32" size="medium" text="" textColor="" />
+        </div>
       </div>
-    </div>
     );
   }
 
@@ -101,16 +114,21 @@ const Leaderboard = () => {
       <div className="w-full py-4">
         <Card
           bg={"bg-white/10"}
-          rank="⭐" // Change this based on your logic to determine the user's rank
-          amount={user.points} // Set this to the current user's points
-          username={user.username || 'N/A'}
+          rank="⭐" // Current user's rank symbol (or adjust as needed)
+          amount={user.points} // Current user's points
+          username={user.username || "N/A"}
         />
-        {notification && <p className="text-green-500">{notification}</p>} {/* Display notification */}
+        {notification && <p className="text-green-500">{notification}</p>}
       </div>
       <h3 className="place-self-start font-bold text-xl">Top Users</h3>
-      <div className="flex flex-col space-y-2 w-full">
+      <div className="flex-grow overflow-y-auto max-h-[calc(100vh-40vh)] w-full overflow-x-hidden">
         {topUsers.map((topUser, index) => (
-          <Card key={topUser.telegramId} rank={`#${index + 1}`} amount={topUser.points} username={topUser.username} />
+          <Card
+            key={topUser.telegramId}
+            rank={getRankEmoji(index)}
+            amount={topUser.points}
+            username={topUser.firstName || "Anonymous"}
+          />
         ))}
       </div>
     </main>
