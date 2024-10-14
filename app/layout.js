@@ -10,13 +10,15 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="bg-black">
+      <body className="h-screen max-w-dvh overflow-hidden flex flex-col bg-black">
         <Script
           src="https://telegram.org/js/telegram-web-app.js"
           strategy="beforeInteractive"
         />
-        <div className="h-dvh">{children}</div>
-        <Footer />
+        <div className="flex-1 flex flex-col p-2">{children}</div>
+        <footer className="sticky bottom-0 w-full">
+          <Footer />
+        </footer>
       </body>
     </html>
   );

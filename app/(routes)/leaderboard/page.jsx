@@ -69,33 +69,6 @@ const Leaderboard = () => {
     }
   }, []);
 
-  const handleCompleteTask = async () => {
-    if (!user) return;
-
-    try {
-      const res = await fetch("/api/complete-task", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ telegramId: user.telegramId }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setUser((prevUser) => ({
-          ...prevUser,
-          points: data.points, // Assuming data.points is the updated points
-          taskCompleted: true
-        }));
-        setNotification("Task completed successfully! You earned 200 points.");
-      } else {
-        setError(data.error || "Failed to complete task");
-      }
-    } catch (err) {
-      setError("An error occurred while completing the task: " + err.message);
-    }
-  };
-
   if (userLoading || loadingTopUsers) {
     return (
       <div className="flex gap-2 flex-col justify-center items-center min-h-svh bg-white">

@@ -6,14 +6,43 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
+
 model User {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  telegramId  Int      @unique
-  username    String?
-  firstName   String?
-  lastName    String?
-  points      Int      @default(0)
-  isNewUser   Boolean  @default(true) // Track if the user is new
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                      String   @id @default(auto()) @map("_id") @db.ObjectId
+  telegramId              Int      @unique
+  username                String?
+  firstName               String?
+  lastName                String?
+  points                  Int      @default(0)
+  hasClaimedWelcomePoints Boolean  @default(false)
+  isNewUser               Boolean  @default(true)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  // Relation to completed tasks via TaskCompletion model
+  taskCompletions TaskCompletion[]
+}
+
+model Task {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  points    Int
+  path      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relation to task completions
+  completions TaskCompletion[]
+}
+
+model TaskCompletion {
+   id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+ taskId  Int
+  completed Boolean
+  createdAt DateTime @default(now())
+
+  // Relations to User and Task models
+  User    User    @relation(fields: [userId], references: [id])
+  task Task @relation(fields: [taskId], references: [id])
 }
