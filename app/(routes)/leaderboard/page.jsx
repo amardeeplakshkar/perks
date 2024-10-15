@@ -94,7 +94,7 @@ const Leaderboard = () => {
   }
 
   if (error) {
-    return <div className="container mx-auto p-4 text-red-500">{error}</div>;
+    return <div className=" mx-auto p-4 text-red-500">{error}</div>;
   }
 
   if (!user) {

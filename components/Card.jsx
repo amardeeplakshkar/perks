@@ -20,7 +20,7 @@ const Card = ({ username = "Cocks User", amount, rank, bg }) => {
 
   return (
     <div
-      className={`card flex justify-between items-center w-full p-2 rounded-lg m-1 ${bg}`}
+      className={` flex justify-between items-center p-2 rounded-lg w-full m-1 ${bg}`}
     >
       <div className="flex justify-center items-center gap-2">
         <span

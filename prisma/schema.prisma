@@ -18,7 +18,8 @@ model User {
   isNewUser               Boolean  @default(true)
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
-
+ dailyPlays Int      @default(0) // Number of games played today
+  lastPlayedDate     DateTime? 
   taskCompletions TaskCompletion[]
 }
 

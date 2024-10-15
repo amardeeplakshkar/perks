@@ -9,8 +9,7 @@ import Link from "next/link";
 import Slider from "react-slick"; // Import slider package
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-// Welcome slider component
-// Welcome slider component
+
 const WelcomeSlider = ({ onComplete }) => {
   const slides = [
     {
@@ -46,14 +45,14 @@ const WelcomeSlider = ({ onComplete }) => {
     </div>
   );
 };
+
 const Page = () => {
   const [user, setUser] = useState(null);
   const [showSlider, setShowSlider] = useState(false);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true); // Add loading state for better user experience
+  const [loading, setLoading] = useState(true);
   const [notification, setNotification] = useState("");
 
-  // Fetch user data only once when the component mounts
   useEffect(() => {
     if (typeof window !== "undefined" && window.Telegram?.WebApp) {
       const tg = window.Telegram.WebApp;
@@ -62,7 +61,6 @@ const Page = () => {
       const initDataUnsafe = tg.initDataUnsafe || {};
 
       if (initDataUnsafe.user) {
-        // Check if user exists in the backend and fetch points and status (hasClaimedWelcomePoints)
         fetch("/api/user", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -70,18 +68,14 @@ const Page = () => {
         })
           .then((res) => res.json())
           .then((data) => {
+            console.log('User data received:', data); // Log the user data
             if (data.error) {
               setError(data.error);
             } else {
               setUser(data);
-              // If the user has already claimed the points, do not show the slider
-              if (data.hasClaimedWelcomePoints) {
-                setShowSlider(false);
-              } else {
-                setShowSlider(true); // Show the welcome slider if the user is new
-              }
+              setShowSlider(!data.hasClaimedWelcomePoints);
             }
-            setLoading(false); // Set loading to false once data is fetched
+            setLoading(false);
           })
           .catch((err) => {
             setError("Failed to fetch user data: " + err.message);
@@ -97,55 +91,33 @@ const Page = () => {
     }
   }, []);
 
-  const handleCompleteTask = async () => {
+  const handlePlayGame = async () => {
     if (!user) return;
-
+  
     try {
-      const res = await fetch("/api/complete-task", {
+      const response = await fetch("/api/play-game", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ telegramId: user.telegramId }),
       });
-      const data = await res.json();
-      if (data.success) {
+  
+      const data = await response.json();
+  
+      if (response.ok) {
         setUser((prev) => ({
           ...prev,
-          points: data.points,
-          taskCompleted: true,
+          points: prev.points - 100,
+          dailyPlays: prev.dailyPlays + 1, // Increment dailyPlays
         }));
-        setNotification("Task completed successfully! You earned 200 points.");
+        setNotification("Game started! 100 points deducted.");
       } else {
-        setError(data.error || "Failed to complete task");
+        setError(data.error || "You have reached the daily limit of 3 plays.");
       }
     } catch (err) {
-      setError("An error occurred while completing the task: " + err.message);
+      setError("An error occurred: " + err.message);
     }
   };
-
-  const handleSliderComplete = () => {
-    // Grant welcome points and mark user as not new anymore
-    fetch("/api/welcome-points", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        telegramId: user.telegramId,
-        points: 500, // Change this value to the amount of points you want to grant
-      }),
-    })
-      .then((res) => {
-        if (res.ok) {
-          return res.json(); // Parse the JSON response
-        }
-        throw new Error("Failed to grant welcome points"); // Handle error if response is not ok
-      })
-      .then(() => {
-        setShowSlider(false); // Hide the slider after completion
-        setUser({ ...user, points: user.points + 500, isNewUser: false }); // Example of adding welcome points
-      })
-      .catch((err) => {
-        console.error(err); // Log any errors
-      });
-  };
+  
 
   const preventInteraction = (e) => {
     e.preventDefault();
@@ -161,13 +133,13 @@ const Page = () => {
   }
 
   if (error) {
-    return <div className="container mx-auto p-4 text-red-500">{error}</div>;
+    return <div className="mx-auto p-4 text-red-500">{error}</div>;
   }
 
   return (
     <main>
       {showSlider ? (
-        <WelcomeSlider onComplete={handleSliderComplete} />
+        <WelcomeSlider onComplete={() => setShowSlider(false)} />
       ) : (
         // Main content starts here
         <div>
@@ -189,7 +161,8 @@ const Page = () => {
               <h3 className="text-xl font-bold pb-4">
                 {user.points.toLocaleString()} COCKS
               </h3>
-              <section className="rounded-lg w-full bg-white/10 p-3">
+            
+              <section className="rounded-lg w-full bg-white/10 p-3 pb-0">
                 <h4 className="uppercase font-bold">Cocks Community</h4>
                 <p className="text-white/70 text-sm">
                   Community Of Telegram OGS
@@ -200,12 +173,20 @@ const Page = () => {
                   </button>
                 </Link>
               </section>
-              <div className="absolute bottom-20 bg-slate-500 h-[6rem] w-full rounded-md m-1">
-                <h3>
-                  play to earn cocks
-                  (Coming Soon) 
-                </h3>
-              </div>
+              <Link className="absolute bottom-24 h-[6rem] w-full" href="/game">
+                <button
+                  onClick={handlePlayGame}
+                  disabled={user.dailyPlays >= 3 || user.points < 100}
+                  className={`relative bg-slate-500 h-full w-full rounded-md m-1 flex justify-center items-center font-bold mt-4 px-4 py-2 ${
+                    user.dailyPlays >= 3 || user.points < 100
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-green-500 hover:bg-green-600 text-white"
+                  }`}
+                >
+                  Play Game (100 Points)
+                  <span className="absolute top-0 right-1 bg-amber-500 rounded-md p-2">Played: {user ? user.dailyPlays : 0}/3</span>
+                </button>
+              </Link>
             </div>
           </main>
         </div>

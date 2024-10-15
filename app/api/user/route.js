@@ -2,19 +2,12 @@ import { NextResponse } from "next/server";
 import { prisma } from "../../../lib/prisma";
 
 // GET user with completed tasks
+// GET user with completed tasks
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
     const telegramId = searchParams.get("telegramId");
-    const allUsers = await prisma.user.findMany({
-      include: {
-        taskCompletions: true, // Include task completions
-      },
-    });
 
-    console.log("All users with their task completions:", allUsers);
-
-    // Validate telegramId
     if (!telegramId) {
       return NextResponse.json(
         { error: "Invalid user data: telegramId is missing" },
@@ -22,17 +15,15 @@ export async function GET(req) {
       );
     }
 
-    // Fetch user along with their completed tasks
     const user = await prisma.user.findUnique({
-      where: { telegramId: parseInt(telegramId) }, // Assuming telegramId is an integer
-      include: { taskCompletions: true }, // Include completed tasks
+      where: { telegramId: parseInt(telegramId) },
+      include: { taskCompletions: true },
     });
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Extract completed task IDs
     const completedTaskIds = user.taskCompletions.map((tc) => tc.taskId);
 
     return NextResponse.json({
@@ -42,6 +33,7 @@ export async function GET(req) {
       lastName: user.lastName,
       points: user.points,
       hasClaimedWelcomePoints: user.hasClaimedWelcomePoints,
+      dailyPlays: user.dailyPlays, // Include dailyPlays here
       completedTaskIds,
     });
   } catch (error) {
@@ -54,11 +46,11 @@ export async function GET(req) {
 }
 
 // POST to create or fetch a user
+// POST to create or fetch a user
 export async function POST(req) {
   try {
     const userData = await req.json();
 
-    // Validate incoming data
     if (!userData || !userData.id) {
       return NextResponse.json(
         { error: "Invalid user data: telegramId is missing" },
@@ -66,14 +58,12 @@ export async function POST(req) {
       );
     }
 
-    // Check if user exists based on telegramId
     let user = await prisma.user.findUnique({
       where: { telegramId: userData.id },
-      include: { taskCompletions: true }, // Include completed tasks
+      include: { taskCompletions: true },
     });
 
     if (!user) {
-      // Create a new user if not found
       user = await prisma.user.create({
         data: {
           telegramId: userData.id,
@@ -82,12 +72,12 @@ export async function POST(req) {
           lastName: userData.last_name || "",
           points: 0,
           hasClaimedWelcomePoints: false,
+          dailyPlays: 0, // Initialize dailyPlays if creating a new user
         },
-        include: { taskCompletions: true }, // Include completed tasks
+        include: { taskCompletions: true },
       });
     }
 
-    // Extract completed task IDs
     const completedTaskIds = user.taskCompletions.map((tc) => tc.taskId);
 
     return NextResponse.json({
@@ -97,6 +87,7 @@ export async function POST(req) {
       lastName: user.lastName,
       points: user.points,
       hasClaimedWelcomePoints: user.hasClaimedWelcomePoints,
+      dailyPlays: user.dailyPlays, // Include dailyPlays here
       completedTaskIds,
     });
   } catch (error) {
