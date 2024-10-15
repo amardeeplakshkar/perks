@@ -177,13 +177,13 @@ const Page = () => {
                 <button
                   onClick={handlePlayGame}
                   disabled={user.dailyPlays >= 3 || user.points < 100}
-                  className={`relative bg-slate-500 h-full w-full rounded-md m-1 flex justify-center items-center font-bold mt-4 px-4 py-2 ${
+                  className={`gameButton relative bg-slate-500 h-full w-full rounded-md m-1 flex justify-center items-center font-bold mt-4 px-4 py-2 ${
                     user.dailyPlays >= 3 || user.points < 100
                       ? "bg-gray-400 cursor-not-allowed"
                       : "bg-green-500 hover:bg-green-600 text-white"
                   }`}
                 >
-                  Play Game (100 Points)
+            
                   <span className="absolute top-0 right-1 bg-amber-500 rounded-md p-2">Played: {user ? user.dailyPlays : 0}/3</span>
                 </button>
               </Link>
