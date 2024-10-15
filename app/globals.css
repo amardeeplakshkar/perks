@@ -107,3 +107,11 @@ button {
   background-color: #333;
   cursor: pointer;
 }
+.gameButton{
+  background-image:url("https://res.cloudinary.com/duscymcfc/image/upload/v1729001765/Bg.jpg");
+  background-size: cover; /* Ensures the image covers the entire area */
+  background-position: center; /* Centers the image */
+  background-repeat: no-repeat; /* Prevents tiling */
+  height: 100%;
+  width: 100%;
+}
