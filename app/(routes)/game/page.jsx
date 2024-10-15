@@ -14,14 +14,14 @@ import Img8 from "../../public/8.png";
 import { useRouter } from "next/navigation"; // for routing
 
 const cardImages = [
-  { src: Img1, matched: true },
-  { src: Img2, matched: true },
-  { src: Img3, matched: true },
-  { src: Img4, matched: true },
-  { src: Img5, matched: true },
-  { src: Img6, matched: true },
-  { src: Img7, matched: true },
-  { src: Img8, matched: true },
+  { src: Img1, matched: false },
+  { src: Img2, matched: false },
+  { src: Img3, matched: false },
+  { src: Img4, matched: false },
+  { src: Img5, matched: false },
+  { src: Img6, matched: false },
+  { src: Img7, matched: false },
+  { src: Img8, matched: false },
 ];
 
 const GamePage = () => {
