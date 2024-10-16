@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import ChickenImg from "../app/giphy.gif";
 
-const recipient = process.env.NEXT_PUBLIC_TON_WALLET_ADDRESS || "YOUR_TON_ADDRESS"; // Replace with your TON address
+const recipient = process.env.NEXT_PUBLIC_TON_WALLET_ADDRESS || "UQCFxWYZpOuoBmVq1eL3kEvR8q2IAN2oEpTYjM89xlZ6YB1Z"; // Replace with your TON address
 
 const TaskCard = () => {
   const [tasks, setTasks] = useState([
