@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { useTonConnectUI } from '@tonconnect/ui-react';
+import { useState, useEffect, useCallback } from "react";
+import { useTonConnectUI } from "@tonconnect/ui-react";
 import { Address } from "@ton/core";
 
 export default function WalletPage() {
@@ -50,20 +50,6 @@ export default function WalletPage() {
     };
   }, [tonConnectUI, handleWalletConnection, handleWalletDisconnection]);
 
-  const openWalletModal = async () => {
-    try {
-      console.log("Opening wallet connect modal...");
-      await tonConnectUI.openModal({
-        onWalletLinkOpen: (url) => {
-          console.log("Opening external wallet link:", url);
-          openInNewTab(url); // Force wallet deep link to open externally
-        },
-      });
-    } catch (error) {
-      console.error("Error opening wallet modal:", error);
-    }
-  };
-
   const openInNewTab = (url) => {
     const newTab = window.open(url, "_blank", "noopener,noreferrer");
     if (!newTab || newTab.closed || typeof newTab.closed === "undefined") {
@@ -79,7 +65,17 @@ export default function WalletPage() {
         await tonConnectUI.disconnect();
         console.log("Wallet disconnected.");
       } else {
-        await openWalletModal();
+        console.log("Opening wallet connect modal...");
+        await tonConnectUI.openModal();
+
+        // Listen for wallet links when the modal opens
+        document.addEventListener("click", (event) => {
+          const target = event.target as HTMLAnchorElement;
+          if (target.tagName === "A" && target.href.includes("ton://")) {
+            event.preventDefault(); // Prevents opening inside the mini-app
+            openInNewTab(target.href); // Open in a new browser tab
+          }
+        });
       }
     } catch (error) {
       console.error("Error in wallet action:", error);
