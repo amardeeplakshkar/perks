@@ -25,16 +25,10 @@ const TaskCard = () => {
   const [loading, setLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [tonConnectUI] = useTonConnectUI();
-  const router = useRouter();
+
 
   // Ensure the wallet is connected before rendering this component
-  useEffect(() => {
-    if (!tonConnectUI.connected) {
-      router.replace("/wallet"); // Redirect only if not connected
-    } else {
-      setLoading(false); // Allow the component to load normally
-    }
-  }, [tonConnectUI, router]);
+
 
   const sendTransaction = useCallback(async () => {
     if (!tonConnectUI.connected) {
