@@ -21,8 +21,8 @@ export default function RootLayout({ children }) {
         />
         <div className="flex-1 flex flex-col p-2">
           {/* TonConnect provider with your manifest */}
-          <TonConnectUIProvider manifestUrl="https://apricot-selected-dog-88.mypinata.cloud/ipfs/QmXvaFWgecTknsxyq4zASJSHMCqKJ3vXz2KgFnejC6oGHu">
-            {children}
+          <TonConnectUIProvider manifestUrl="https://violet-traditional-rabbit-103.mypinata.cloud/ipfs/QmQJJAdZ2qSwdepvb5evJq7soEBueFenHLX3PoM6tiBffm">
+  {children}
           </TonConnectUIProvider>
         </div>
         <footer className="sticky bottom-0 w-full">
