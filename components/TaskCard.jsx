@@ -8,7 +8,8 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import ChickenImg from "../app/giphy.gif";
 
-const recipient = process.env.NEXT_PUBLIC_TON_WALLET_ADDRESS || "UQCFxWYZpOuoBmVq1eL3kEvR8q2IAN2oEpTYjM89xlZ6YB1Z"; // Replace with your TON address
+const recipient = process.env.NEXT_PUBLIC_TON_WALLET_ADDRESS || 
+  "UQCFxWYZpOuoBmVq1eL3kEvR8q2IAN2oEpTYjM89xlZ6YB1Z"; // Replace with your TON address
 
 const TaskCard = () => {
   const [tasks, setTasks] = useState([
@@ -26,18 +27,18 @@ const TaskCard = () => {
   const [tonConnectUI] = useTonConnectUI();
   const router = useRouter();
 
-  // Ensure the wallet is connected, else redirect
+  // Ensure the wallet is connected before rendering this component
   useEffect(() => {
     if (!tonConnectUI.connected) {
-      router.push("/wallet");
+      router.replace("/wallet"); // Redirect only if not connected
     } else {
-      setLoading(false);
+      setLoading(false); // Allow the component to load normally
     }
   }, [tonConnectUI, router]);
 
   const sendTransaction = useCallback(async () => {
     if (!tonConnectUI.connected) {
-      router.push("/wallet");
+      router.push("/wallet"); // Push to wallet page if not connected
       return;
     }
 
@@ -59,7 +60,7 @@ const TaskCard = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [tonConnectUI]);
+  }, [tonConnectUI, router]);
 
   const fetchUserData = async () => {
     if (window.Telegram?.WebApp) {
