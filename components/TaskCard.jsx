@@ -25,7 +25,7 @@ const TaskCard = () => {
   const [loading, setLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [tonConnectUI] = useTonConnectUI();
-
+const router = useRouter();
 
   // Ensure the wallet is connected before rendering this component
 
