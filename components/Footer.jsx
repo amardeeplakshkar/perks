@@ -28,7 +28,7 @@ const Footer = () => {
   }, []);
 
   return (
-    <footer className="bg-black w-full flex justify-between items-center p-4    ">
+  <footer className="bg-black w-full flex justify-between items-center py-1 px-2 rounded-xl">
       {ROUTES.map((route) => (
         <div
           key={route.href}

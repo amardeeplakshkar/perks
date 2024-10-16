@@ -4,11 +4,16 @@ import { FaCheck, FaHandPointer } from "react-icons/fa";
 import { TrophySpin } from "react-loading-indicators";
 import ChickenImg from "../app/giphy.gif";
 import Image from "next/image";
+import TonWeb from "tonweb";
+
+const tonweb = new TonWeb();
+
 
 const TaskCard = () => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const recipient = process.env.NEXT_PUBLIC_TON_WALLET_ADDRESS;
   const [tasks, setTasks] = useState([
     {
       id: 1,
@@ -53,7 +58,29 @@ const TaskCard = () => {
       path: "https://youtube.com/cocks_community",
     },
   ]);
+  const [isLoading, setIsLoading] = useState(false);
 
+  const sendTransaction = async () => {
+    if (!window.ton) {
+      alert("TON Wallet not connected.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await window.ton.send("ton_sendTransaction", {
+        to: recipient,
+        value: "0.01", // Amount in TON
+        data: "Reward transaction",
+      });
+      alert("Transaction successful!");
+    } catch (error) {
+      console.error("Transaction failed:", error);
+      alert("Transaction failed.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
   useEffect(() => {
     const fetchUser = async () => {
       if (typeof window !== "undefined" && window.Telegram?.WebApp) {
@@ -128,7 +155,6 @@ const TaskCard = () => {
         )
       );
 
-      // Open the task link in a new tab
       window.open(path, "_blank");
     } catch (error) {
     }
@@ -148,37 +174,44 @@ const TaskCard = () => {
   }
 
   return (
-    <div className="w-full mx-auto p-2 rounded-lg shadow-md overflow-y-scroll pb-80">
+    <div className="w-full mx-auto p-2 rounded-lg shadow-md overflow-y-scroll">
       <h2 className="text-xl font-semibold text-white mb-4">
         Earn for checking socials {tasks.filter((t) => t.completed).length}/
         {tasks.length}
       </h2>
-      <div className="overflow-scroll max-h-[25rem] overflow-x-hidden w-full space-y-2">
-        {tasks.map((task) => (
-          <div
-            key={task.id}
-            className="flex items-center justify-between bg-slate-600/15 p-3 rounded-lg"
-          >
-            <div>
-              <div className="text-white font-semibold text-sm">
-                {task.name}
-              </div>
-              <div className="text-xs"> +{task.points} COCKS</div>
-            </div>
-            <button
-              onClick={() => handleClaim(task.id, task.path)}
-              disabled={task.completed}
-              className={`${
-                task.completed
-                  ? "bg-gray-500 cursor-not-allowed"
-                  : "bg-green-500 hover:bg-green-600"
-              } text-white p-2 rounded-lg transition`}
-            >
-              {task.completed ? <FaCheck /> : <FaHandPointer />}
-            </button>
-          </div>
-        ))}
+      <div className="pb-6 overflow-scroll max-h-[80dvh] overflow-x-hidden w-full space-y-2">
+      <div style={{ padding: "20px" }}>
+      <h2>Task: Send 0.01 TON</h2>
+      <button onClick={sendTransaction} disabled={isLoading}>
+        {isLoading ? "Processing..." : "Send 0.01 TON"}
+      </button>
+    </div>
+  {tasks.map((task) => (
+    <div
+      key={task.id}
+      className="flex items-center justify-between bg-slate-600/15 p-3 rounded-lg"
+    >
+      <div>
+        <div className="text-white font-semibold text-sm">
+          {task.name}
+        </div>
+        <div className="text-xs"> +{task.points} COCKS</div>
       </div>
+      <button
+        onClick={() => handleClaim(task.id, task.path)}
+        disabled={task.completed}
+        className={`${
+          task.completed
+            ? "bg-gray-500 cursor-not-allowed"
+            : "bg-green-500 hover:bg-green-600"
+        } text-white p-2 rounded-lg transition`}
+      >
+        {task.completed ? <FaCheck /> : <FaHandPointer />}
+      </button>
+    </div>
+  ))}
+</div>
+
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { FaTasks } from "react-icons/fa";
+import { FaTasks, FaWallet } from "react-icons/fa";
 import { FaChartSimple, FaUserGroup } from "react-icons/fa6";
 import { IoHomeSharp } from "react-icons/io5";
 import { FaYoutube } from "react-icons/fa";
@@ -26,6 +26,11 @@ export const ROUTES = [
     label: "Friends",
     icon: FaUserGroup,
     href: "/friends",
+  },
+  {
+    label: "Wallet",
+    icon: FaWallet,
+    href: "/wallet",
   },
 ];
 

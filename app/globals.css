@@ -9,6 +9,9 @@
   -ms-user-select: none;
   user-select: none; 
 }
+html {
+  touch-action: manipulation; /* Prevent zoom from double-tap gestures */
+}
 .no-interaction {
   pointer-events: none;
   user-select: none;

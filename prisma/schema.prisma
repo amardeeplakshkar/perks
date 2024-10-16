@@ -21,6 +21,17 @@ model User {
  dailyPlays Int      @default(0) // Number of games played today
   lastPlayedDate     DateTime? 
   taskCompletions TaskCompletion[]
+   walletAddress       String?  // Store connected TON wallet address
+  isWalletConnected   Boolean  @default(false) // Wallet connection status
+  transactions        Transaction[]
+}
+
+model Transaction {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String   // Reference to User
+  amount        Float    // TON amount
+  timestamp     DateTime @default(now())
+  user          User     @relation(fields: [userId], references: [id])
 }
 
 model Task {

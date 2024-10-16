@@ -1,6 +1,5 @@
 import React from "react";
 
-// Function to select a random bright Tailwind color
 const getRandomBrightColorClass = () => {
   const brightColors = [
     "bg-yellow-500", 
@@ -16,7 +15,7 @@ const getRandomBrightColorClass = () => {
 };
 
 const Card = ({ username = "Cocks User", amount, rank, bg }) => {
-  const randomColorClass = getRandomBrightColorClass(); // Get a random bright color class for the initials background
+  const randomColorClass = getRandomBrightColorClass(); 
 
   return (
     <div
@@ -26,7 +25,7 @@ const Card = ({ username = "Cocks User", amount, rank, bg }) => {
         <span
           className={`h-[3rem] text-black font-bold aspect-square flex justify-center items-center rounded-full uppercase ${randomColorClass}`}
         >
-          {username.slice(0, 2)} {/* Shows the first 2 letters of the username */}
+          {username.slice(0, 2)} 
         </span>
         <div>
           <h4 className="text-sm font-bold">{username}</h4>

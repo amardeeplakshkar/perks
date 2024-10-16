@@ -89,6 +89,25 @@ const Page = () => {
       setError("This app should be opened in Telegram");
       setLoading(false);
     }
+    if (typeof window !== "undefined") {
+      const links = document.querySelectorAll("[data-href]");
+
+      links.forEach((link) => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          const href = link.getAttribute("data-href");
+          if (href) {
+            window.open(href, "_self");
+          }
+        });
+      });
+
+      return () => {
+        links.forEach((link) => {
+          link.removeEventListener("click", () => {});
+        });
+      };
+    }
   }, []);
 
   const handlePlayGame = async () => {
@@ -167,13 +186,13 @@ const Page = () => {
                 <p className="text-white/70 text-sm">
                   Community Of Telegram OGS
                 </p>
-                <Link href={"https://t.me/cocks_community"}>
+                <div data-href={"https://t.me/cocks_community"}>
                   <button className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 border-0 text-black font-bold rounded-2xl px-3 py-1 mt-1 text-sm">
                     Join
                   </button>
-                </Link>
+                </div>
               </section>
-              <Link className="absolute bottom-24 h-[6rem] w-full" href="/game">
+              <div className="absolute bottom-[5rem] h-[6rem] w-full" data-href="/game">
                 <button
                   onClick={handlePlayGame}
                   disabled={user.dailyPlays >= 3 || user.points < 100}
@@ -183,10 +202,9 @@ const Page = () => {
                       : "bg-green-500 hover:bg-green-600 text-white"
                   }`}
                 >
-            
                   <span className="absolute top-0 right-1 bg-amber-500 rounded-md p-2">Played: {user ? user.dailyPlays : 0}/3</span>
                 </button>
-              </Link>
+              </div>
             </div>
           </main>
         </div>
