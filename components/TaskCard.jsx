@@ -155,10 +155,24 @@ const TaskCard = () => {
     );
   }
 
+  const preventInteraction = (e) => {
+    e.preventDefault();
+  };
+
   return (
     <div className="w-full mx-auto p-2 rounded-lg shadow-md overflow-y-scroll">
       <h2 className="text-xl font-semibold text-white my-2 mb-4 flex ">
-        Daily Tasks <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Smileys/Exploding%20Head.webp" alt="Exploding Head" width="25" height="25" />
+        Daily Tasks{" "}
+        <img
+          src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Smileys/Exploding%20Head.webp"
+          alt="Exploding Head"
+          width="25"
+          height="25"
+          className="no-interaction"
+          onContextMenu={preventInteraction}
+          onTouchStart={preventInteraction}
+          draggable={false}
+        />
       </h2>
 
       <div className="flex items-center justify-between bg-slate-100/15 p-3 rounded-lg mb-2">

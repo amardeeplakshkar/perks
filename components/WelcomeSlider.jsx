@@ -40,7 +40,17 @@ const WelcomeSlider = ({ onComplete }) => {
         onClick={onComplete}
         className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex justify-center items-center"
       >
-        Claim Welcome Points <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Smileys/Partying%20Face.webp" alt="Partying Face" width="25" height="25" />
+        Claim Welcome Points{" "}
+        <img
+          src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Smileys/Partying%20Face.webp"
+          alt="Partying Face"
+          width="25"
+          height="25"
+          className="no-interaction"
+          onContextMenu={preventInteraction}
+          onTouchStart={preventInteraction}
+          draggable={false}
+        />
       </button>
     </div>
   );
@@ -68,7 +78,7 @@ const Page = () => {
         })
           .then((res) => res.json())
           .then((data) => {
-            console.log('User data received:', data); // Log the user data
+            console.log("User data received:", data); // Log the user data
             if (data.error) {
               setError(data.error);
             } else {
@@ -112,16 +122,16 @@ const Page = () => {
 
   const handlePlayGame = async () => {
     if (!user) return;
-  
+
     try {
       const response = await fetch("/api/play-game", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ telegramId: user.telegramId }),
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
         setUser((prev) => ({
           ...prev,
@@ -136,7 +146,6 @@ const Page = () => {
       setError("An error occurred: " + err.message);
     }
   };
-  
 
   const preventInteraction = (e) => {
     e.preventDefault();
@@ -180,7 +189,7 @@ const Page = () => {
               <h3 className="text-xl font-bold pb-4">
                 {user.points.toLocaleString()} COCKS
               </h3>
-            
+
               <section className="rounded-lg w-full bg-white/10 p-3 pb-0">
                 <h4 className="uppercase font-bold">Cocks Community</h4>
                 <p className="text-white/70 text-sm">
@@ -192,7 +201,10 @@ const Page = () => {
                   </button>
                 </div>
               </section>
-              <div className="absolute bottom-[5rem] h-[6rem] w-full" data-href="/game">
+              <div
+                className="absolute bottom-[5rem] h-[6rem] w-full"
+                data-href="/game"
+              >
                 <button
                   onClick={handlePlayGame}
                   disabled={user.dailyPlays >= 3 || user.points < 100}
@@ -202,7 +214,9 @@ const Page = () => {
                       : "bg-green-500 hover:bg-green-600 text-white"
                   }`}
                 >
-                  <span className="absolute top-0 right-1 bg-amber-500 rounded-md p-2">Played: {user ? user.dailyPlays : 0}/3</span>
+                  <span className="absolute top-0 right-1 bg-amber-500 rounded-md p-2">
+                    Played: {user ? user.dailyPlays : 0}/3
+                  </span>
                 </button>
               </div>
             </div>
