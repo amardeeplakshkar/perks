@@ -12,10 +12,7 @@ import "slick-carousel/slick/slick-theme.css";
 
 const WelcomeSlider = ({ onComplete }) => {
   const slides = [
-    {
-      title: "Welcome to the Community!",
-      description: "We're glad to have you!",
-    },
+    { title: "Welcome to the Community!", description: "We're glad to have you!" },
     { title: "Earn Points", description: "Complete tasks and earn rewards!" },
     { title: "Get Started", description: "Let's start earning those points!" },
   ];
@@ -47,8 +44,8 @@ const WelcomeSlider = ({ onComplete }) => {
           width="25"
           height="25"
           className="no-interaction"
-          onContextMenu={preventInteraction}
-          onTouchStart={preventInteraction}
+          onContextMenu={(e) => e.preventDefault()}
+          onTouchStart={(e) => e.preventDefault()}
           draggable={false}
         />
       </button>
@@ -82,7 +79,7 @@ const Page = () => {
             if (data.error) {
               setError(data.error);
             } else {
-              setUser(data);
+              setUser(data || {}); // Set user data or fallback to empty object
               setShowSlider(!data.hasClaimedWelcomePoints);
             }
             setLoading(false);
@@ -93,15 +90,16 @@ const Page = () => {
           });
       } else {
         setError("No user data available");
+        setUser({}); // Fallback to empty object
         setLoading(false);
       }
     } else {
       setError("This app should be opened in Telegram");
       setLoading(false);
     }
+
     if (typeof window !== "undefined") {
       const links = document.querySelectorAll("[data-href]");
-
       links.forEach((link) => {
         link.addEventListener("click", (e) => {
           e.preventDefault();
@@ -136,7 +134,7 @@ const Page = () => {
         setUser((prev) => ({
           ...prev,
           points: prev.points - 100,
-          dailyPlays: prev.dailyPlays + 1, // Increment dailyPlays
+          dailyPlays: prev.dailyPlays + 1,
         }));
         setNotification("Game started! 100 points deducted.");
       } else {
@@ -145,10 +143,6 @@ const Page = () => {
     } catch (err) {
       setError("An error occurred: " + err.message);
     }
-  };
-
-  const preventInteraction = (e) => {
-    e.preventDefault();
   };
 
   if (loading) {
@@ -169,7 +163,6 @@ const Page = () => {
       {showSlider ? (
         <WelcomeSlider onComplete={() => setShowSlider(false)} />
       ) : (
-        // Main content starts here
         <div>
           <main className="p-3">
             <div className="flex flex-col justify-center items-center">
@@ -179,43 +172,35 @@ const Page = () => {
                 height={150}
                 width={150}
                 className="no-interaction"
-                onContextMenu={preventInteraction}
-                onTouchStart={preventInteraction}
+                onContextMenu={(e) => e.preventDefault()}
+                onTouchStart={(e) => e.preventDefault()}
                 draggable={false}
               />
-
-              <h3 className="p-2">@{user.username}</h3>
-
+              <h3 className="p-2">@{user?.username || "Guest"}</h3>
               <h3 className="text-xl font-bold pb-4">
-                {user.points.toLocaleString()} COCKS
+                {user?.points?.toLocaleString() || 0} COCKS
               </h3>
-
               <section className="rounded-lg w-full bg-white/10 p-3 pb-0">
                 <h4 className="uppercase font-bold">Cocks Community</h4>
-                <p className="text-white/70 text-sm">
-                  Community Of Telegram OGS
-                </p>
+                <p className="text-white/70 text-sm">Community Of Telegram OGS</p>
                 <div data-href={"https://t.me/cocks_community"}>
                   <button className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 border-0 text-black font-bold rounded-2xl px-3 py-1 mt-1 text-sm">
                     Join
                   </button>
                 </div>
               </section>
-              <div
-                className="absolute bottom-[5rem] h-[6rem] w-full"
-                data-href="/game"
-              >
+              <div className="absolute bottom-[5rem] h-[6rem] w-full" data-href="/game">
                 <button
                   onClick={handlePlayGame}
-                  disabled={user.dailyPlays >= 3 || user.points < 100}
-                  className={`gameButton relative bg-slate-500 h-full w-full rounded-md m-1 flex justify-center items-center font-bold mt-4 px-4 py-2 ${
-                    user.dailyPlays >= 3 || user.points < 100
+                  disabled={user?.dailyPlays >= 3 || user?.points < 100}
+                  className={`gameButton relative h-full w-full rounded-md m-1 flex justify-center items-center font-bold mt-4 px-4 py-2 ${
+                    user?.dailyPlays >= 3 || user?.points < 100
                       ? "bg-gray-400 cursor-not-allowed"
                       : "bg-green-500 hover:bg-green-600 text-white"
                   }`}
                 >
                   <span className="absolute top-0 right-1 bg-amber-500 rounded-md p-2">
-                    Played: {user ? user.dailyPlays : 0}/3
+                    Played: {user?.dailyPlays || 0}/3
                   </span>
                 </button>
               </div>
@@ -228,3 +213,4 @@ const Page = () => {
 };
 
 export default Page;
+                 
