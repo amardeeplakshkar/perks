@@ -1,4 +1,3 @@
-  
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
@@ -15,10 +14,14 @@ export default function WalletPage() {
   const [isLoading, setIsLoading] = useState(true);
   const { setWalletAddress } = useWallet();
 
-  const openInNewTab = (url: string) => {
+  /**
+   * Opens the deeplink in the Telegram external browser or default browser.
+   */
+  const openDeeplink = (url: string) => {
     const tg = (window as any).Telegram?.WebApp;
     if (tg) {
-      tg.openLink(url); // Open the link in Telegram’s external browser.
+      tg.close(); // Close the mini-app first to ensure proper behavior.
+      setTimeout(() => tg.openLink(url), 100); // Open the link after closing the mini-app.
     } else {
       const newTab = window.open(url, "_blank", "noopener,noreferrer");
       if (!newTab || newTab.closed || typeof newTab.closed === "undefined") {
@@ -27,6 +30,9 @@ export default function WalletPage() {
     }
   };
 
+  /**
+   * Handles the wallet connect/disconnect action.
+   */
   const handleWalletAction = async () => {
     try {
       if (tonConnectUI.connected) {
@@ -43,20 +49,20 @@ export default function WalletPage() {
     }
   };
 
-  const handleLinkClick = (event: MouseEvent) => {
-    const target = event.target as HTMLAnchorElement;
-    if (target.tagName === "A" && target.href.startsWith("ton://")) {
-      event.preventDefault(); // Prevent navigation within the mini-app.
-      openInNewTab(target.href); // Open the link in an external browser.
-    }
-  };
-
   useEffect(() => {
-    // Add click event listener when the component mounts
+    const handleLinkClick = (event: MouseEvent) => {
+      const target = event.target as HTMLAnchorElement;
+      if (target.tagName === "A" && target.href.startsWith("ton://")) {
+        event.preventDefault(); // Prevent navigation within the mini-app.
+        openDeeplink(target.href); // Open in external browser.
+      }
+    };
+
+    // Add click event listener to detect deeplinks.
     document.addEventListener("click", handleLinkClick);
 
-    // Clean up the event listener on unmount
     return () => {
+      // Clean up the event listener on unmount.
       document.removeEventListener("click", handleLinkClick);
     };
   }, []);
@@ -65,7 +71,7 @@ export default function WalletPage() {
     (address: string) => {
       const base64Address = Address.parse(address).toString({
         urlSafe: true,
-        bounceable: true, // Ensures it matches the wallet's display format.
+        bounceable: true,
       });
 
       setTonWalletAddress(base64Address);
