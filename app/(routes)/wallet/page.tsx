@@ -1,59 +1,24 @@
+  
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
 import { useTonConnectUI } from "@tonconnect/ui-react";
 import { Address } from "@ton/core";
+import TonAddress from "../../../components/Address";
+import { useWallet } from "../../../components/context/WalletContext";
+import TonLogo from "../../public/ton-logo.png";
+import Image from "next/image";
 
 export default function WalletPage() {
   const [tonConnectUI] = useTonConnectUI();
   const [tonWalletAddress, setTonWalletAddress] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
-  const handleWalletConnection = useCallback((address: string) => {
-    setTonWalletAddress(address);
-    console.log("Wallet connected successfully with address:", address);
-    setIsLoading(false);
-  }, []);
-
-  const handleWalletDisconnection = useCallback(() => {
-    setTonWalletAddress(null);
-    console.log("Wallet disconnected successfully!");
-    setIsLoading(false);
-  }, []);
-
-  useEffect(() => {
-    const checkWalletConnection = async () => {
-      console.log("Checking wallet connection...");
-      if (tonConnectUI.account?.address) {
-        console.log("Wallet already connected:", tonConnectUI.account.address);
-        handleWalletConnection(tonConnectUI.account.address);
-      } else {
-        handleWalletDisconnection();
-      }
-    };
-
-    checkWalletConnection();
-
-    const unsubscribe = tonConnectUI.onStatusChange((wallet) => {
-      if (wallet) {
-        console.log("Status changed: Connected");
-        handleWalletConnection(wallet.account.address);
-      } else {
-        console.log("Status changed: Disconnected");
-        handleWalletDisconnection();
-      }
-    });
-
-    return () => {
-      console.log("Cleaning up listeners...");
-      unsubscribe();
-    };
-  }, [tonConnectUI, handleWalletConnection, handleWalletDisconnection]);
+  const { setWalletAddress } = useWallet();
 
   const openInNewTab = (url: string) => {
     const tg = (window as any).Telegram?.WebApp;
     if (tg) {
-      tg.openLink(url);
+      tg.openLink(url); // Open the link in Telegram’s external browser.
     } else {
       const newTab = window.open(url, "_blank", "noopener,noreferrer");
       if (!newTab || newTab.closed || typeof newTab.closed === "undefined") {
@@ -72,34 +37,72 @@ export default function WalletPage() {
       } else {
         console.log("Opening wallet connect modal...");
         await tonConnectUI.openModal();
-  
-        // Add click listener to ensure deeplinks open in an external browser.
-        const openDeeplink = (event: Event) => {
-          const target = event.target as HTMLAnchorElement;
-          if (target.tagName === "A" && target.href.includes("ton://")) {
-            event.preventDefault(); // Prevent default behavior inside the mini-app.
-            openInNewTab(target.href); // Open the deeplink in a new browser tab.
-          }
-        };
-  
-        // Listen for clicks on the modal links.
-        document.addEventListener("click", openDeeplink);
-  
-        // Clean up the event listener after the modal is closed.
-        tonConnectUI.onStatusChange(() => {
-          document.removeEventListener("click", openDeeplink);
-        });
       }
     } catch (error) {
       console.error("Error in wallet action:", error);
     }
   };
-  
 
-  const formatAddress = (address: string) => {
-    const tempAddress = Address.parse(address).toString();
-    return `${tempAddress.slice(0, 4)}...${tempAddress.slice(-4)}`;
+  const handleLinkClick = (event: MouseEvent) => {
+    const target = event.target as HTMLAnchorElement;
+    if (target.tagName === "A" && target.href.startsWith("ton://")) {
+      event.preventDefault(); // Prevent navigation within the mini-app.
+      openInNewTab(target.href); // Open the link in an external browser.
+    }
   };
+
+  useEffect(() => {
+    // Add click event listener when the component mounts
+    document.addEventListener("click", handleLinkClick);
+
+    // Clean up the event listener on unmount
+    return () => {
+      document.removeEventListener("click", handleLinkClick);
+    };
+  }, []);
+
+  const handleWalletConnection = useCallback(
+    (address: string) => {
+      const base64Address = Address.parse(address).toString({
+        urlSafe: true,
+        bounceable: true, // Ensures it matches the wallet's display format.
+      });
+
+      setTonWalletAddress(base64Address);
+      setWalletAddress(base64Address);
+      console.log("Wallet connected with address:", base64Address);
+      setIsLoading(false);
+    },
+    [setWalletAddress]
+  );
+
+  const handleWalletDisconnection = useCallback(() => {
+    setTonWalletAddress(null);
+    console.log("Wallet disconnected!");
+    setIsLoading(false);
+  }, []);
+
+  useEffect(() => {
+    const checkWalletConnection = async () => {
+      if (tonConnectUI.account?.address) {
+        handleWalletConnection(tonConnectUI.account.address);
+      } else {
+        handleWalletDisconnection();
+      }
+    };
+
+    checkWalletConnection();
+
+    const unsubscribe = tonConnectUI.onStatusChange((wallet) => {
+      if (wallet) {
+        handleWalletConnection(wallet.account.address);
+      } else {
+        handleWalletDisconnection();
+      }
+    });
+
+    return () => unsubscribe();
+  }, [tonConnectUI, handleWalletConnection, handleWalletDisconnection]);
 
   if (isLoading) {
     return (
@@ -113,12 +116,14 @@ export default function WalletPage() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center">
-      <h1 className="text-4xl font-bold mb-8">TON Connect Demo</h1>
+      <h1 className="text-4xl font-bold mb-8">TON Wallet Connect</h1>
       {tonWalletAddress ? (
         <div className="flex flex-col items-center">
-          <p className="mb-4">Connected: {formatAddress(tonWalletAddress)}</p>
+          <p className="mb-4">
+            <TonAddress />
+          </p>
           <button
-            onClick={handleWalletAction}
+            onClick={() => tonConnectUI.disconnect()}
             className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
           >
             Disconnect Wallet
@@ -127,8 +132,9 @@ export default function WalletPage() {
       ) : (
         <button
           onClick={handleWalletAction}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex justify-center items-center gap-2"
         >
+          <Image src={TonLogo} alt="Ton Logo" height={30} width={30} />
           Connect TON Wallet
         </button>
       )}

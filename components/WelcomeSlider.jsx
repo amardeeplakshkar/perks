@@ -5,10 +5,12 @@ import { useEffect, useState } from "react";
 import { TrophySpin } from "react-loading-indicators";
 import ChickenImg from "../app/giphy.gif";
 import Logo from "../app/favicon.ico";
-import Link from "next/link";
 import Slider from "react-slick"; // Import slider package
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import Link from "next/link";
+import Address from "../components/Address"
+
 
 const WelcomeSlider = ({ onComplete }) => {
   const slides = [
@@ -112,7 +114,7 @@ const Page = () => {
 
       return () => {
         links.forEach((link) => {
-          link.removeEventListener("click", () => {});
+          link.removeEventListener("click", () => { });
         });
       };
     }
@@ -166,6 +168,9 @@ const Page = () => {
         <div>
           <main className="p-3">
             <div className="flex flex-col justify-center items-center">
+              <Link href="/wallet" className="cursor-pointer user-none">
+                <Address />
+              </Link>
               <Image
                 src={Logo}
                 alt="Community Logo"
@@ -180,7 +185,7 @@ const Page = () => {
               <h3 className="text-xl font-bold pb-4">
                 {user?.points?.toLocaleString() || 0} COCKS
               </h3>
-              <section className="rounded-lg w-full bg-white/10 p-3 pb-0">
+              <section className="rounded-lg w-full bg-white/10 p-3">
                 <h4 className="uppercase font-bold">Cocks Community</h4>
                 <p className="text-white/70 text-sm">Community Of Telegram OGS</p>
                 <div data-href={"https://t.me/cocks_community"}>
@@ -193,11 +198,10 @@ const Page = () => {
                 <button
                   onClick={handlePlayGame}
                   disabled={user?.dailyPlays >= 3 || user?.points < 100}
-                  className={`gameButton relative h-full w-full rounded-md m-1 flex justify-center items-center font-bold mt-4 px-4 py-2 ${
-                    user?.dailyPlays >= 3 || user?.points < 100
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-green-500 hover:bg-green-600 text-white"
-                  }`}
+                  className={`gameButton relative h-full w-full rounded-md m-1 flex justify-center items-center font-bold mt-4 px-4 py-2 ${user?.dailyPlays >= 3 || user?.points < 100
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-green-500 hover:bg-green-600 text-white"
+                    }`}
                 >
                   <span className="absolute top-0 right-1 bg-amber-500 rounded-md p-2">
                     Played: {user?.dailyPlays || 0}/3
@@ -213,4 +217,3 @@ const Page = () => {
 };
 
 export default Page;
-                 
