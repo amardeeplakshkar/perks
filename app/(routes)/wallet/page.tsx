@@ -18,17 +18,16 @@ export default function WalletPage() {
    * Opens the deeplink in the Telegram external browser or default browser.
    */
   const openDeeplink = (url: string) => {
-    const tg = (window as any).Telegram?.WebApp;
-    if (tg) {
-      tg.close(); // Close the mini-app first to ensure proper behavior.
-      setTimeout(() => tg.openLink(url), 100); // Open the link after closing the mini-app.
-    } else {
-      const newTab = window.open(url, "_blank", "noopener,noreferrer");
-      if (!newTab || newTab.closed || typeof newTab.closed === "undefined") {
-        alert("Please enable popups to open the wallet.");
-      }
+  const tg = (window as any).Telegram?.WebApp;
+  if (tg) {
+    tg.openLink(url); // Open link in the Telegram browser
+  } else {
+    const newTab = window.open(url, "_blank", "noopener,noreferrer");
+    if (!newTab || newTab.closed || typeof newTab.closed === "undefined") {
+      alert("Please enable popups to open the wallet.");
     }
-  };
+  }
+};
 
   /**
    * Handles the wallet connect/disconnect action.
