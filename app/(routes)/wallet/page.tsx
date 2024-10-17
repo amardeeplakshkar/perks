@@ -51,16 +51,18 @@ export default function WalletPage() {
   }, [tonConnectUI, handleWalletConnection, handleWalletDisconnection]);
 
   const openInNewTab = (url: string) => {
-  const tg = (window as any).Telegram?.WebApp;
-  if (tg) {
-    tg.openLink(url);
+  if (window.Telegram?.WebApp) {
+    // Open the link in the Telegram browser.
+    window.Telegram.WebApp.openLink(url);
   } else {
+    // Fallback for other browsers.
     const newTab = window.open(url, "_blank", "noopener,noreferrer");
     if (!newTab || newTab.closed || typeof newTab.closed === "undefined") {
       alert("Please enable popups to open the wallet.");
     }
   }
 };
+
   
 const handleWalletAction = async () => {
   try {
