@@ -50,10 +50,15 @@ export default function WalletPage() {
     };
   }, [tonConnectUI, handleWalletConnection, handleWalletDisconnection]);
 
-  const openInNewTab = (url) => {
-    const newTab = window.open(url, "_blank", "noopener,noreferrer");
-    if (!newTab || newTab.closed || typeof newTab.closed === "undefined") {
-      alert("Please enable popups to open the wallet.");
+  const openInNewTab = (url: string) => {
+    const tg = (window as any).Telegram?.WebApp;
+    if (tg) {
+      tg.openLink(url);
+    } else {
+      const newTab = window.open(url, "_blank", "noopener,noreferrer");
+      if (!newTab || newTab.closed || typeof newTab.closed === "undefined") {
+        alert("Please enable popups to open the wallet.");
+      }
     }
   };
 
@@ -67,20 +72,29 @@ export default function WalletPage() {
       } else {
         console.log("Opening wallet connect modal...");
         await tonConnectUI.openModal();
-
-        // Listen for wallet links when the modal opens
-        document.addEventListener("click", (event) => {
+  
+        // Add click listener to ensure deeplinks open in an external browser.
+        const openDeeplink = (event: Event) => {
           const target = event.target as HTMLAnchorElement;
           if (target.tagName === "A" && target.href.includes("ton://")) {
-            event.preventDefault(); // Prevents opening inside the mini-app
-            openInNewTab(target.href); // Open in a new browser tab
+            event.preventDefault(); // Prevent default behavior inside the mini-app.
+            openInNewTab(target.href); // Open the deeplink in a new browser tab.
           }
+        };
+  
+        // Listen for clicks on the modal links.
+        document.addEventListener("click", openDeeplink);
+  
+        // Clean up the event listener after the modal is closed.
+        tonConnectUI.onStatusChange(() => {
+          document.removeEventListener("click", openDeeplink);
         });
       }
     } catch (error) {
       console.error("Error in wallet action:", error);
     }
   };
+  
 
   const formatAddress = (address: string) => {
     const tempAddress = Address.parse(address).toString();

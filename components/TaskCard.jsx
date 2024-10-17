@@ -7,54 +7,75 @@ import { useTonConnectUI } from "@tonconnect/ui-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import ChickenImg from "../app/giphy.gif";
+import { TASKS as initialTasks } from "../constants"; // Import initial tasks
+import TonLogo from "../app/public/ton-logo.png";
+import { toast } from "react-toastify";
 
-const recipient = process.env.NEXT_PUBLIC_TON_WALLET_ADDRESS || 
+const recipient =
+  process.env.NEXT_PUBLIC_TON_WALLET_ADDRESS ||
   "UQCFxWYZpOuoBmVq1eL3kEvR8q2IAN2oEpTYjM89xlZ6YB1Z"; // Replace with your TON address
 
 const TaskCard = () => {
-  const [tasks, setTasks] = useState([
-    { id: 1, name: "Check COCKS Telegram", points: 500, completed: false, path: "https://t.me/cocks_community" },
-    { id: 2, name: "Check COCKS Instagram", points: 250, completed: false, path: "https://instagram.com/cocks_community" },
-    { id: 3, name: "Check COCKS X", points: 250, completed: false, path: "https://x.com/cocks_community" },
-    { id: 4, name: "Check COCKS Facebook", points: 250, completed: false, path: "https://facebook.com/cocks_community" },
-    { id: 5, name: "Check COCKS Discord", points: 250, completed: false, path: "https://t.me/cocks_community" },
-    { id: 6, name: "Check COCKS YouTube", points: 250, completed: false, path: "https://youtube.com/cocks_community" },
-  ]);
-
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [tasks, setTasks] = useState(initialTasks); // Initialize tasks with state
   const [tonConnectUI] = useTonConnectUI();
-const router = useRouter();
+  const router = useRouter();
 
-  // Ensure the wallet is connected before rendering this component
-
+  const checkAllTasksCompleted = (updatedTasks) => {
+    const allCompleted = updatedTasks.every((task) => task.completed);
+    if (allCompleted) {
+      toast.success("All tasks completed! 🎉");
+    }
+  };
 
   const sendTransaction = useCallback(async () => {
     if (!tonConnectUI.connected) {
-      router.push("/wallet"); // Push to wallet page if not connected
+      router.push("/wallet");
       return;
     }
 
     setIsLoading(true);
     try {
       await tonConnectUI.sendTransaction({
-        validUntil: Math.floor(Date.now() / 1000) + 60, // Valid for 60 seconds
+        validUntil: Math.floor(Date.now() / 1000) + 60,
         messages: [
           {
             address: recipient,
-            amount: (0.01 * 1e9).toString(), // Convert TON to nanoTON
+            amount: (0.001 * 1e9).toString(), // Convert 0.001 TON to nanoTON
           },
         ],
       });
-      alert("Transaction successful!");
+
+      toast.success("Transaction successful! 5000 COCKS added 🎉");
+
+      const userId = user?.telegramId;
+      const taskId = "810a64761a0fd871189af34d"; // Make sure this is a valid task ID
+      const points = 5000;
+
+      const response = await fetch("/api/claim", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, taskId, points }),
+      });
+
+      if (response.status === 200) {
+        const updatedTasks = tasks.map((t) =>
+          t.id === taskId ? { ...t, completed: true } : t
+        );
+        setTasks(updatedTasks);
+        checkAllTasksCompleted(updatedTasks);
+      } else {
+        throw new Error("Failed to update points.");
+      }
     } catch (error) {
       console.error("Transaction failed:", error);
-      alert("Transaction failed. Please try again.");
+      toast.error("❌ Transaction failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
-  }, [tonConnectUI, router]);
+  }, [tonConnectUI, router, user, tasks]);
 
   const fetchUserData = async () => {
     if (window.Telegram?.WebApp) {
@@ -107,15 +128,21 @@ const router = useRouter();
       });
 
       if (response.status === 200) {
-        setTasks((prevTasks) =>
-          prevTasks.map((task) =>
-            task.id === id ? { ...task, completed: true } : task
-          )
+        toast.success(`✅ ${task.name} completed!`);
+
+        const updatedTasks = tasks.map((t) =>
+          t.id === id ? { ...t, completed: true } : t
         );
+        setTasks(updatedTasks);
+        checkAllTasksCompleted(updatedTasks);
+
         window.open(path, "_blank");
+      } else {
+        throw new Error("Failed to claim task.");
       }
     } catch (error) {
-      console.error("Failed to claim task:", error);
+      console.error("Claim task error:", error);
+      toast.error("❌ Failed to claim task. Please try again.");
     }
   };
 
@@ -130,43 +157,64 @@ const router = useRouter();
 
   return (
     <div className="w-full mx-auto p-2 rounded-lg shadow-md overflow-y-scroll">
-      <h2 className="text-xl font-semibold text-white mb-4">
+      <h2 className="text-xl font-semibold text-white my-2 mb-4 flex ">
+        Daily Tasks <Image src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Smileys/Exploding%20Head.webp" alt="Exploding Head" width="25" height="25" />
+      </h2>
+
+      <div className="flex items-center justify-between bg-slate-100/15 p-3 rounded-lg mb-2">
+        <div className="flex justify-center items-center gap-2">
+          <div className="bg-zinc-900 rounded-full h-[2rem] w-[2rem] flex justify-center items-center">
+            <Image src={TonLogo} />
+          </div>
+          <div>
+            <div className="text-white font-semibold text-sm">
+              Make Ton Transaction
+            </div>
+            <div className="text-xs">+5000 COCKS</div>
+          </div>
+        </div>
+        <div className="grid place-items-center">
+          <button
+            onClick={sendTransaction}
+            disabled={isLoading}
+            className="bg-blue-500 hover:bg-blue-700 text-white p-2 rounded"
+          >
+            {isLoading ? "Processing..." : <FaHandPointer />}
+          </button>
+        </div>
+      </div>
+      <h2 className="text-xl font-semibold text-white my-2  mb-4">
         Earn for checking socials {tasks.filter((t) => t.completed).length}/
         {tasks.length}
       </h2>
       <div className="pb-6 overflow-scroll max-h-[80dvh] w-full space-y-2">
-        <div className="p-4 bg-gray-100 rounded-lg">
-          <h2>Task: Send 0.01 TON</h2>
-          <button
-            onClick={sendTransaction}
-            disabled={isLoading}
-            className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
-          >
-            {isLoading ? "Processing..." : "Send 0.01 TON"}
-          </button>
-        </div>
         {tasks.map((task) => (
           <div
             key={task.id}
-            className="flex items-center justify-between bg-slate-600/15 p-3 rounded-lg"
+            className="flex items-center justify-between bg-slate-100/15 p-3 rounded-lg"
           >
-            <div>
-              <div className="text-white font-semibold text-sm">
-                {task.name}
+            <div className="flex justify-center items-center gap-2">
+              <div className="bg-zinc-900 rounded-full p-2">{task.icon}</div>
+              <div>
+                <div className="text-white font-semibold text-sm">
+                  {task.name}
+                </div>
+                <div className="text-xs">+{task.points} COCKS</div>
               </div>
-              <div className="text-xs">+{task.points} COCKS</div>
             </div>
-            <button
-              onClick={() => handleClaim(task.id, task.path)}
-              disabled={task.completed}
-              className={`${
-                task.completed
-                  ? "bg-gray-500 cursor-not-allowed"
-                  : "bg-green-500 hover:bg-green-600"
-              } text-white p-2 rounded-lg transition`}
-            >
-              {task.completed ? <FaCheck /> : <FaHandPointer />}
-            </button>
+            <div className="grid place-items-center">
+              <button
+                onClick={() => handleClaim(task.id, task.path)}
+                disabled={task.completed}
+                className={`${
+                  task.completed
+                    ? "bg-gray-500 cursor-not-allowed"
+                    : "bg-green-500 hover:bg-green-600"
+                } text-white p-2 rounded-lg transition`}
+              >
+                {task.completed ? <FaCheck /> : <FaHandPointer />}
+              </button>
+            </div>
           </div>
         ))}
       </div>

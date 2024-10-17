@@ -38,9 +38,9 @@ const WelcomeSlider = ({ onComplete }) => {
       </Slider>
       <button
         onClick={onComplete}
-        className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex justify-center items-center"
       >
-        Claim Welcome Points
+        Claim Welcome Points <Image src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Smileys/Partying%20Face.webp" alt="Partying Face" width="25" height="25" />
       </button>
     </div>
   );
