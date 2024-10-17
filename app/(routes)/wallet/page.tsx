@@ -3,106 +3,29 @@
 import { useState, useEffect, useCallback } from "react";
 import { useTonConnectUI } from "@tonconnect/ui-react";
 import { Address } from "@ton/core";
-import TonAddress from "../../../components/Address";
-import { useWallet } from "../../../components/context/WalletContext";
-import TonLogo from "../../public/ton-logo.png";
-import Image from "next/image";
 
 export default function WalletPage() {
   const [tonConnectUI] = useTonConnectUI();
   const [tonWalletAddress, setTonWalletAddress] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { setWalletAddress } = useWallet();
 
-  /**
-   * Opens the deeplink in the Telegram external browser or default browser.
-   */
-  /**
- * Opens the deeplink in the Telegram external browser or default browser.
- */
-const openDeeplink = (url: string) => {
-  const tg = (window as any).Telegram?.WebApp;
-
-  if (tg) {
-    // Attempt to open the link in the Telegram external browser
-    // Using setTimeout to create a slight delay
-    setTimeout(() => {
-      const newTab = window.open(url, "_blank", "noopener,noreferrer");
-      if (!newTab || newTab.closed || typeof newTab.closed === "undefined") {
-        // If unable to open the link, suggest copying it
-        alert("Unable to open the wallet link. Please copy it and open in your browser.");
-      }
-    }, 100);
-  } else {
-    // For non-Telegram environments, open directly
-    const newTab = window.open(url, "_blank", "noopener,noreferrer");
-    if (!newTab || newTab.closed || typeof newTab.closed === "undefined") {
-      alert("Please enable popups to open the wallet.");
-    }
-  }
-};
-
-  /**
-   * Handles the wallet connect/disconnect action.
-   */
-  const handleWalletAction = async () => {
-    try {
-      if (tonConnectUI.connected) {
-        console.log("Disconnecting wallet...");
-        setIsLoading(true);
-        await tonConnectUI.disconnect();
-        console.log("Wallet disconnected.");
-      } else {
-        console.log("Opening wallet connect modal...");
-        await tonConnectUI.openModal();
-      }
-    } catch (error) {
-      console.error("Error in wallet action:", error);
-    }
-  };
-
-  useEffect(() => {
-    const handleLinkClick = (event: MouseEvent) => {
-      const target = event.target as HTMLAnchorElement;
-      if (target.tagName === "A" && target.href.startsWith("ton://")) {
-        event.preventDefault(); // Prevent navigation within the mini-app.
-        openDeeplink(target.href); // Open in external browser.
-      }
-    };
-
-    // Add click event listener to detect deeplinks.
-    document.addEventListener("click", handleLinkClick);
-
-    return () => {
-      // Clean up the event listener on unmount.
-      document.removeEventListener("click", handleLinkClick);
-    };
+  const handleWalletConnection = useCallback((address: string) => {
+    setTonWalletAddress(address);
+    console.log("Wallet connected successfully with address:", address);
+    setIsLoading(false);
   }, []);
-
-  const handleWalletConnection = useCallback(
-    (address: string) => {
-      const base64Address = Address.parse(address).toString({
-        urlSafe: true,
-        bounceable: true,
-      });
-
-      setTonWalletAddress(base64Address);
-      setWalletAddress(base64Address);
-      console.log("Wallet connected with address:", base64Address);
-      setIsLoading(false);
-    },
-    [setWalletAddress]
-  );
 
   const handleWalletDisconnection = useCallback(() => {
     setTonWalletAddress(null);
-    console.log("Wallet disconnected!");
+    console.log("Wallet disconnected successfully!");
     setIsLoading(false);
   }, []);
 
   useEffect(() => {
     const checkWalletConnection = async () => {
+      console.log("Checking wallet connection...");
       if (tonConnectUI.account?.address) {
+        console.log("Wallet already connected:", tonConnectUI.account.address);
         handleWalletConnection(tonConnectUI.account.address);
       } else {
         handleWalletDisconnection();
@@ -113,14 +36,69 @@ const openDeeplink = (url: string) => {
 
     const unsubscribe = tonConnectUI.onStatusChange((wallet) => {
       if (wallet) {
+        console.log("Status changed: Connected");
         handleWalletConnection(wallet.account.address);
       } else {
+        console.log("Status changed: Disconnected");
         handleWalletDisconnection();
       }
     });
 
-    return () => unsubscribe();
+    return () => {
+      console.log("Cleaning up listeners...");
+      unsubscribe();
+    };
   }, [tonConnectUI, handleWalletConnection, handleWalletDisconnection]);
+
+  const openInNewTab = (url: string) => {
+  const tg = (window as any).Telegram?.WebApp;
+  if (tg) {
+    tg.openLink(url);
+  } else {
+    const newTab = window.open(url, "_blank", "noopener,noreferrer");
+    if (!newTab || newTab.closed || typeof newTab.closed === "undefined") {
+      alert("Please enable popups to open the wallet.");
+    }
+  }
+};
+  
+const handleWalletAction = async () => {
+  try {
+    if (tonConnectUI.connected) {
+      console.log("Disconnecting wallet...");
+      setIsLoading(true);
+      await tonConnectUI.disconnect();
+      console.log("Wallet disconnected.");
+    } else {
+      console.log("Opening wallet connect modal...");
+      await tonConnectUI.openModal();
+
+      // Add click listener to ensure deeplinks open in an external browser.
+      const openDeeplink = (event: Event) => {
+        const target = event.target as HTMLAnchorElement;
+        if (target.tagName === "A" && target.href.includes("ton://")) {
+          event.preventDefault(); // Prevent default behavior inside the mini-app.
+          openInNewTab(target.href); // Open the deeplink in a new browser tab.
+        }
+      };
+
+      // Listen for clicks on the modal links.
+      document.addEventListener("click", openDeeplink);
+
+      // Clean up the event listener after the modal is closed.
+      tonConnectUI.onStatusChange(() => {
+        document.removeEventListener("click", openDeeplink);
+      });
+    }
+  } catch (error) {
+    console.error("Error in wallet action:", error);
+  }
+};
+
+  const formatAddress = (address: string) => {
+    const tempAddress = Address.parse(address).toString();
+    return `${tempAddress.slice(0, 4)}...${tempAddress.slice(-4)}`;
+  };
 
   if (isLoading) {
     return (
@@ -134,14 +112,12 @@ const openDeeplink = (url: string) => {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center">
-      <h1 className="text-4xl font-bold mb-8">TON Wallet Connect</h1>
+      <h1 className="text-4xl font-bold mb-8">TON Connect Demo</h1>
       {tonWalletAddress ? (
         <div className="flex flex-col items-center">
-          <p className="mb-4">
-            <TonAddress />
-          </p>
+          <p className="mb-4">Connected: {formatAddress(tonWalletAddress)}</p>
           <button
-            onClick={() => tonConnectUI.disconnect()}
+            onClick={handleWalletAction}
             className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
           >
             Disconnect Wallet
@@ -150,9 +126,8 @@ const openDeeplink = (url: string) => {
       ) : (
         <button
           onClick={handleWalletAction}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex justify-center items-center gap-2"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
-          <Image src={TonLogo} alt="Ton Logo" height={30} width={30} />
           Connect TON Wallet
         </button>
       )}
