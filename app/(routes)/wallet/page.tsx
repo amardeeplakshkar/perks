@@ -17,11 +17,24 @@ export default function WalletPage() {
   /**
    * Opens the deeplink in the Telegram external browser or default browser.
    */
-  const openDeeplink = (url: string) => {
+  /**
+ * Opens the deeplink in the Telegram external browser or default browser.
+ */
+const openDeeplink = (url: string) => {
   const tg = (window as any).Telegram?.WebApp;
+
   if (tg) {
-    tg.openLink(url); // Open link in the Telegram browser
+    // Attempt to open the link in the Telegram external browser
+    // Using setTimeout to create a slight delay
+    setTimeout(() => {
+      const newTab = window.open(url, "_blank", "noopener,noreferrer");
+      if (!newTab || newTab.closed || typeof newTab.closed === "undefined") {
+        // If unable to open the link, suggest copying it
+        alert("Unable to open the wallet link. Please copy it and open in your browser.");
+      }
+    }, 100);
   } else {
+    // For non-Telegram environments, open directly
     const newTab = window.open(url, "_blank", "noopener,noreferrer");
     if (!newTab || newTab.closed || typeof newTab.closed === "undefined") {
       alert("Please enable popups to open the wallet.");
