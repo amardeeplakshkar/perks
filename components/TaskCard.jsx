@@ -51,7 +51,7 @@ const TaskCard = () => {
       toast.success("Transaction successful! 5000 COCKS added 🎉");
 
       const userId = user?.telegramId;
-      const taskId = "810a64761a0fd871189af34d"; // Make sure this is a valid task ID
+      const taskId = "810a64761a0fd871189af34d"; 
       const points = 5000;
 
       const response = await fetch("/api/claim", {
