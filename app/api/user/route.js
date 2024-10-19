@@ -74,7 +74,6 @@ export async function POST(req) {
           hasClaimedWelcomePoints: false,
           dailyPlays: 0, // Initialize dailyPlays if creating a new user
         },
-        include: { taskCompletions: true },
       });
     }
 

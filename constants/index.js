@@ -6,6 +6,7 @@ import { AiFillInstagram } from "react-icons/ai";
 import { FaTelegramPlane } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 
+
 export const ROUTES = [
   {
     label: "Home",
@@ -31,7 +32,7 @@ export const ROUTES = [
 
 export const TASKS = [
   {
-    id: 1,
+    id: "607f1f77bcf86cd799439011", // Replace with valid 24-character hex string
     name: "Follow Cocks on Telegram",
     path: "https://t.me/cocks_community",
     points: 500,
@@ -39,7 +40,7 @@ export const TASKS = [
     completed: false,
   },
   {
-    id: 2,
+    id: "607f1f77bcf86cd799439012",
     name: "Follow Cocks on X",
     path: "https://x.com/cocks_community",
     points: 200,
@@ -47,7 +48,7 @@ export const TASKS = [
     completed: false,
   },
   {
-    id: 3,
+    id: "607f1f77bcf86cd799439013",
     name: "Follow Cocks on Instagram",
     path: "https://instagram.com/cocks_community",
     points: 100,
@@ -55,7 +56,7 @@ export const TASKS = [
     completed: false,
   },
   {
-    id: 4,
+    id: "607f1f77bcf86cd799439014",
     name: "Follow Cocks on Youtube",
     path: "https://youtube.com/cocks_community",
     points: 250,
