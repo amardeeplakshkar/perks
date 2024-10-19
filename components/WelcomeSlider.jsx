@@ -9,80 +9,6 @@ import "slick-carousel/slick/slick-theme.css";
 import { TonConnectButton } from "@tonconnect/ui-react";
 import Loader from "./Loader";
 
-
-const WelcomeSlider = ({ onComplete }) => {
-  const slides = [
-    { title: "Welcome to the Community!", description: "We're glad to have you!" },
-    { title: "Earn Points", description: "Complete tasks and earn rewards!" },
-    { title: "Get Started", description: "Let's start earning those points!" },
-  ];
-
-  const [isClaiming, setIsClaiming] = useState(false);
-
-  const handleClaimPoints = async () => {
-    setIsClaiming(true);
-    // Simulate API call after 10 seconds
-    setTimeout(async () => {
-      try {
-        const response = await fetch("/api/claim-points", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ telegramId: user.telegramId, points: 787 }),
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || "Failed to claim points.");
-        }
-
-        toast.success("Welcome points claimed successfully! 🎉");
-        onComplete(); // Hide slider after claiming points
-      } catch (error) {
-        toast.error(error.message || "Failed to claim points.");
-      } finally {
-        setIsClaiming(false);
-      }
-    }, 10000);
-  };
-
-  return (
-    <div className="welcome-slider">
-      <Slider
-        dots={true}
-        infinite={false}
-        speed={500}
-        slidesToShow={1}
-        slidesToScroll={1}
-      >
-        {slides.map((slide, index) => (
-          <div key={index}>
-            <h3>{slide.title}</h3>
-            <p>{slide.description}</p>
-          </div>
-        ))}
-      </Slider>
-      <button
-        onClick={handleClaimPoints}
-        disabled={isClaiming}
-        className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex justify-center items-center"
-      >
-        {isClaiming ? "Claiming..." : "Claim Welcome Points"}
-        <img
-          src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Smileys/Partying%20Face.webp"
-          alt="Partying Face"
-          width="25"
-          height="25"
-          className="no-interaction"
-          onContextMenu={(e) => e.preventDefault()}
-          onTouchStart={(e) => e.preventDefault()}
-          draggable={false}
-        />
-      </button>
-    </div>
-  );
-};
-
 const Page = () => {
   const [user, setUser] = useState(null);
   const [showSlider, setShowSlider] = useState(false);
@@ -187,9 +113,6 @@ const Page = () => {
 
   return (
     <main>
-            {showSlider ? (
-        <WelcomeSlider user={user} onComplete={() => setShowSlider(false)} />
-      ) : (
         <div>
           <main className="p-3">
             <div className="flex flex-col justify-center items-center">
@@ -234,7 +157,7 @@ const Page = () => {
             </div>
           </main>
         </div>
-      )}
+      }
     </main>
   );
 };
