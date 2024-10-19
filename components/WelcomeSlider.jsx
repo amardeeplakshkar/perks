@@ -3,15 +3,12 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import Logo from "../app/favicon.ico";
-import Slider from "react-slick"; // Import slider package
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import { TonConnectButton } from "@tonconnect/ui-react";
 import Loader from "./Loader";
+import { toast } from "react-toastify";
 
 const Page = () => {
   const [user, setUser] = useState(null);
-  const [showSlider, setShowSlider] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [notification, setNotification] = useState("");
@@ -31,12 +28,11 @@ const Page = () => {
         })
           .then((res) => res.json())
           .then((data) => {
-            console.log("User data received:", data); // Log the user data
+            console.log("User data received:", data);
             if (data.error) {
               setError(data.error);
             } else {
               setUser(data || {}); // Set user data or fallback to empty object
-              setShowSlider(!data.hasClaimedWelcomePoints);
             }
             setLoading(false);
           })
@@ -46,7 +42,7 @@ const Page = () => {
           });
       } else {
         setError("No user data available");
-        setUser({}); // Fallback to empty object
+        setUser({});
         setLoading(false);
       }
     } else {
@@ -68,7 +64,7 @@ const Page = () => {
 
       return () => {
         links.forEach((link) => {
-          link.removeEventListener("click", () => { });
+          link.removeEventListener("click", () => {});
         });
       };
     }
@@ -102,9 +98,7 @@ const Page = () => {
   };
 
   if (loading) {
-    return (
-     <Loader/>
-    );
+    return <Loader />;
   }
 
   if (error) {
@@ -113,51 +107,49 @@ const Page = () => {
 
   return (
     <main>
-        <div>
-          <main className="p-3">
-            <div className="flex flex-col justify-center items-center">
-              <TonConnectButton/>
-              <Image
-                src={Logo}
-                alt="Community Logo"
-                height={150}
-                width={150}
-                className="no-interaction"
-                onContextMenu={(e) => e.preventDefault()}
-                onTouchStart={(e) => e.preventDefault()}
-                draggable={false}
-              />
-              <h3 className="p-2">@{user?.username || "Guest"}</h3>
-              <h3 className="text-xl font-bold pb-4">
-                {user?.points?.toLocaleString() || 0} COCKS
-              </h3>
-              <section className="rounded-lg w-full bg-white/10 p-3">
-                <h4 className="uppercase font-bold">Cocks Community</h4>
-                <p className="text-white/70 text-sm">Community Of Telegram OGS</p>
-                <div data-href={"https://t.me/cocks_community"}>
-                  <button className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 border-0 text-black font-bold rounded-2xl px-3 py-1 mt-1 text-sm">
-                    Join
-                  </button>
-                </div>
-              </section>
-              <div className="absolute bottom-[5rem] h-[6rem] w-full" data-href="/game">
-                <button
-                  onClick={handlePlayGame}
-                  disabled={user?.dailyPlays >= 3 || user?.points < 100}
-                  className={`gameButton relative h-full w-full rounded-md m-1 flex justify-center items-center font-bold mt-4 px-4 py-2 ${user?.dailyPlays >= 3 || user?.points < 100
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-green-500 hover:bg-green-600 text-white"
-                    }`}
-                >
-                  <span className="absolute top-0 right-1 bg-amber-500 rounded-md p-2">
-                    Played: {user?.dailyPlays || 0}/3
-                  </span>
-                </button>
-              </div>
+      <div className="p-3">
+        <div className="flex flex-col justify-center items-center">
+          <TonConnectButton />
+          <Image
+            src={Logo}
+            alt="Community Logo"
+            height={150}
+            width={150}
+            className="no-interaction"
+            onContextMenu={(e) => e.preventDefault()}
+            onTouchStart={(e) => e.preventDefault()}
+            draggable={false}
+          />
+          <h3 className="p-2">@{user?.username || "Guest"}</h3>
+          <h3 className="text-xl font-bold pb-4">
+            {user?.points?.toLocaleString() || 0} COCKS
+          </h3>
+          <section className="rounded-lg w-full bg-white/10 p-3">
+            <h4 className="uppercase font-bold">Cocks Community</h4>
+            <p className="text-white/70 text-sm">Community Of Telegram OGS</p>
+            <div data-href={"https://t.me/cocks_community"}>
+              <button className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 border-0 text-black font-bold rounded-2xl px-3 py-1 mt-1 text-sm">
+                Join
+              </button>
             </div>
-          </main>
+          </section>
+          <div className="absolute bottom-[5rem] h-[6rem] w-full" data-href="/game">
+            <button
+              onClick={handlePlayGame}
+              disabled={user?.dailyPlays >= 3 || user?.points < 100}
+              className={`gameButton relative h-full w-full rounded-md m-1 flex justify-center items-center font-bold mt-4 px-4 py-2 ${
+                user?.dailyPlays >= 3 || user?.points < 100
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-green-500 hover:bg-green-600 text-white"
+              }`}
+            >
+              <span className="absolute top-0 right-1 bg-amber-500 rounded-md p-2">
+                Played: {user?.dailyPlays || 0}/3
+              </span>
+            </button>
+          </div>
         </div>
-      }
+      </div>
     </main>
   );
 };
