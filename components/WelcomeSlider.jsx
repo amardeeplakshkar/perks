@@ -2,15 +2,12 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { TrophySpin } from "react-loading-indicators";
-import ChickenImg from "../app/giphy.gif";
 import Logo from "../app/favicon.ico";
 import Slider from "react-slick"; // Import slider package
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import Link from "next/link";
-import Address from "../components/Address"
-
+import { TonConnectButton } from "@tonconnect/ui-react";
+import Loader from "./Loader";
 
 const WelcomeSlider = ({ onComplete }) => {
   const slides = [
@@ -149,10 +146,7 @@ const Page = () => {
 
   if (loading) {
     return (
-      <div className="flex gap-2 flex-col justify-center items-center min-h-screen bg-white">
-        <Image src={ChickenImg} alt="Loading" width={150} height={150} />
-        <TrophySpin color="#32cd32" size="medium" />
-      </div>
+     <Loader/>
     );
   }
 
@@ -168,9 +162,7 @@ const Page = () => {
         <div>
           <main className="p-3">
             <div className="flex flex-col justify-center items-center">
-              <Link href="/wallet" className="cursor-pointer user-none">
-                <Address />
-              </Link>
+              <TonConnectButton/>
               <Image
                 src={Logo}
                 alt="Community Logo"

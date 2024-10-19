@@ -2,13 +2,12 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { FaCheck, FaHandPointer } from "react-icons/fa";
-import { TrophySpin } from "react-loading-indicators";
 import { useTonConnectUI } from "@tonconnect/ui-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import ChickenImg from "../app/giphy.gif";
 import { TASKS as initialTasks } from "../constants"; // Import initial tasks
 import TonLogo from "../app/public/ton-logo.png";
+import Loader from "../components/Loader"
 import { toast } from "react-toastify";
 
 const recipient =
@@ -32,7 +31,8 @@ const TaskCard = () => {
 
   const sendTransaction = useCallback(async () => {
     if (!tonConnectUI.connected) {
-      router.push("/wallet");
+      router.push("/");
+      toast.error("Connect Wallet First");
       return;
     }
 
@@ -148,10 +148,7 @@ const TaskCard = () => {
 
   if (loading) {
     return (
-      <div className="flex gap-2 flex-col justify-center items-center min-h-screen bg-white">
-        <Image src={ChickenImg} alt="Loading" width={150} height={150} />
-        <TrophySpin color="#32cd32" size="medium" />
-      </div>
+<Loader/>
     );
   }
 

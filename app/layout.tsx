@@ -1,6 +1,5 @@
 "use client";
 import Script from "next/script";
-import {WalletProvider} from "../components/context/WalletContext"
 import "./globals.css";
 import Footer from "../components/Footer";
 import { ToastContainer } from "react-toastify";
@@ -15,12 +14,10 @@ export default function RootLayout({ children }) {
           strategy="beforeInteractive"
         />
         <div className="flex-1 flex flex-col p-2">
-          <WalletProvider>
           <TonConnectUIProvider manifestUrl="https://apricot-selected-dog-88.mypinata.cloud/ipfs/QmXvaFWgecTknsxyq4zASJSHMCqKJ3vXz2KgFnejC6oGHu">
             <ToastContainer position="top-right" autoClose={3000} />
             {children}
           </TonConnectUIProvider>
-          </WalletProvider>
         </div>
         <footer className="sticky bottom-0 w-full">
           <Footer />

@@ -3,10 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Card from "../../../components/Card";
 import useUserData from "../../../components/hooks/useUserData";
-import Image from "next/image";
-import { TrophySpin } from "react-loading-indicators";
-import ChickenImg from "../../../app/giphy.gif";
-
+import Loader from "../../../components/Loader"
 const Leaderboard = () => {
   const { loading: userLoading } = useUserData();
   const [topUsers, setTopUsers] = useState([]);
@@ -84,12 +81,7 @@ const Leaderboard = () => {
 
   if (userLoading || loadingTopUsers) {
     return (
-      <div className="flex gap-2 flex-col justify-center items-center min-h-svh bg-white">
-        <Image src={ChickenImg} alt="chicken" width={150} height={150} />
-        <div className="w-4em">
-          <TrophySpin color="#32cd32" size="medium" text="" textColor="" />
-        </div>
-      </div>
+      <Loader/>
     );
   }
 
@@ -99,12 +91,7 @@ const Leaderboard = () => {
 
   if (!user) {
     return (
-      <div className="flex gap-2 flex-col justify-center items-center min-h-svh bg-white">
-        <Image src={ChickenImg} alt="chicken" width={150} height={150} />
-        <div className="w-4em">
-          <TrophySpin color="#32cd32" size="medium" text="" textColor="" />
-        </div>
-      </div>
+      <Loader/>
     );
   }
 
