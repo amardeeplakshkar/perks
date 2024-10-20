@@ -1,5 +1,7 @@
+"use client"
 import React, { useEffect, useRef } from 'react';
-import styles from './Loader.module.css'; // Use CSS Modules for styling
+import styles from '../../../components/Loader.module.css'; // Use CSS Modules for styling
+import {BlinkBlur} from 'react-loading-indicators'
 
 const Loader = () => {
   const loaderRef = useRef(null); // Use ref to access the loader DOM element
@@ -7,10 +9,10 @@ const Loader = () => {
   // Trigger the transition animation
   const triggerTransition = () => {
     if (loaderRef.current) {
-      loaderRef.current.style.transform = 'translateX(0%)'; // Start position
+      loaderRef.current.style.transform = 'translateX(0%) rotate(0deg)'; // Start position
 
       loaderRef.current.addEventListener('transitionend', () => {
-        loaderRef.current.style.transform = 'translateX(100%)'; // End position
+        loaderRef.current.style.transform = 'translateX(100%) rotate(0deg)'; // End position
       }, { once: true }); // Ensure it only runs once per transition
     }
   };
@@ -19,7 +21,7 @@ const Loader = () => {
     // Repeat the animation every 2 seconds
     const interval = setInterval(() => {
       triggerTransition();
-    }, 2000); // Adjust as needed
+    }, 3000); // Adjust as needed
 
     return () => clearInterval(interval); // Clean up on unmount
   }, []);
@@ -27,7 +29,11 @@ const Loader = () => {
   return (
     <div className={styles.container}>
       <div ref={loaderRef} className={styles.loader}></div>
-      <p className={styles.loadingText}>Loading...</p>
+      <div className={styles.loadingText}>
+        <img src='https://res.cloudinary.com/duscymcfc/image/upload/v1729088502/Cocks/logo.png' className="h-[10rem]  w-[10rem] animate-bounce" />
+
+        <BlinkBlur color="#fff" size="small" text="" textColor="" />
+      </div>
     </div>
   );
 };
