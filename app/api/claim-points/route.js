@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import {prisma} from "../../../lib/prisma"; // Adjust path to your Prisma setup
+import { prisma } from "../../../lib/prisma"; // Adjust the path if needed
 
-// Handle POST request to add welcome points
 export async function POST(request) {
   try {
     const { telegramId, points } = await request.json();
@@ -10,9 +9,15 @@ export async function POST(request) {
       return NextResponse.json({ error: "Telegram ID is required." }, { status: 400 });
     }
 
-    // Check if the user already claimed points
+    // Convert telegramId to an integer
+    const telegramIdInt = parseInt(telegramId, 10);
+
+    if (isNaN(telegramIdInt)) {
+      return NextResponse.json({ error: "Invalid Telegram ID." }, { status: 400 });
+    }
+
     const user = await prisma.user.findUnique({
-      where: { telegramId: telegramId.toString() },
+      where: { telegramId: telegramIdInt },
     });
 
     if (!user) {
@@ -26,12 +31,12 @@ export async function POST(request) {
       );
     }
 
-    // Update user points and set `hasClaimedWelcomePoints` to true
     const updatedUser = await prisma.user.update({
-      where: { telegramId: telegramId.toString() },
+      where: { telegramId: telegramIdInt },
       data: {
         points: user.points + points,
         hasClaimedWelcomePoints: true,
+        isNewUser: false,
       },
     });
 

@@ -1,7 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation"; // Import Next.js router for navigation
+import Image from "next/image";
 import Logo from "../app/favicon.ico";
 import { TonConnectButton } from "@tonconnect/ui-react";
 import Loader from "./Loader";
@@ -12,6 +13,7 @@ const Page = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [notification, setNotification] = useState("");
+  const router = useRouter(); // Initialize Next.js router
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.Telegram?.WebApp) {
@@ -32,7 +34,10 @@ const Page = () => {
             if (data.error) {
               setError(data.error);
             } else {
-              setUser(data || {}); // Set user data or fallback to empty object
+              setUser(data || {});
+              if (!data.hasClaimedWelcomePoints) {
+                router.push("/welcome"); // Redirect to /welcome if points not claimed
+              }
             }
             setLoading(false);
           })
@@ -68,7 +73,7 @@ const Page = () => {
         });
       };
     }
-  }, []);
+  }, [router]);
 
   const handlePlayGame = async () => {
     if (!user) return;
