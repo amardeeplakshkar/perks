@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useRef } from 'react';
-import styles from '../../../components/Loader.module.css'; // Use CSS Modules for styling
+import styles from "./Loader.module.css";
 import {BlinkBlur} from 'react-loading-indicators'
 
 const Loader = () => {
