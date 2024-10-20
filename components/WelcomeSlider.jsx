@@ -133,7 +133,7 @@ const Page = () => {
               </button>
             </div>
           </section>
-          <div className="absolute bottom-[5rem] h-[6rem] w-full" data-href="/game">
+          <a className="absolute bottom-[5rem] h-[6rem] w-full" href="/game">
             <button
               onClick={handlePlayGame}
               disabled={user?.dailyPlays >= 3 || user?.points < 100}
@@ -147,7 +147,7 @@ const Page = () => {
                 Played: {user?.dailyPlays || 0}/3
               </span>
             </button>
-          </div>
+          </a>
         </div>
       </div>
     </main>
