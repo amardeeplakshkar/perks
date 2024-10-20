@@ -126,14 +126,13 @@ const TaskCard = () => {
   };
   
   
-
   const sendTransaction = useCallback(async () => {
     if (!tonConnectUI.connected) {
       router.push("/");
       toast.error("Connect Wallet First");
       return;
     }
-
+  
     setIsLoading(true);
     try {
       await tonConnectUI.sendTransaction({
@@ -141,19 +140,37 @@ const TaskCard = () => {
         messages: [
           {
             address: recipient,
-            amount: (0.001 * 1e9).toString(),
+            amount: (0.001 * 1e9).toString(), // 0.001 TON in nanoton
           },
         ],
       });
-
+  
+      // If transaction is successful, add points to the user
+      const response = await fetch("/api/add-points", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: String(user.telegramId),
+          points: 5000, // Points to add
+        }),
+      });
+  
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Failed to add points.");
+  
+      setUser((prevUser) => ({
+        ...prevUser,
+        points: prevUser.points + 5000,
+      }));
       toast.success("Transaction successful! 5000 COCKS added 🎉");
     } catch (error) {
       console.error("Transaction failed:", error);
-      toast.error("Transaction failed. Please try again.");
+      toast.error(error.message || "Transaction failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
-  }, [tonConnectUI, router]);
+  }, [tonConnectUI, router, user]);
+  
 
   const preventInteraction = (e) => e.preventDefault();
 

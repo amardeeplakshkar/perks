@@ -2,10 +2,7 @@ import { prisma } from "../../../lib/prisma";
 
 export const POST = async (req) => {
   try {
-    const { userId, points } = await req.json(); // Parse JSON body
-
-    // Ensure both userId and points are provided
-    console.log(userId, points);
+    const { userId, points } = await req.json();
 
     if (!userId || points === undefined) {
       return new Response(
@@ -14,9 +11,8 @@ export const POST = async (req) => {
       );
     }
 
-    // Convert userId to the correct type if needed (e.g., integer)
-    const telegramId = parseInt(userId, 10);
-    console.log(telegramId);
+    const telegramId = parseInt(userId, 10); // Ensure userId is converted to a number
+    console.log(telegramId, points);
 
     const user = await prisma.user.update({
       where: { telegramId },
@@ -29,16 +25,23 @@ export const POST = async (req) => {
     );
   } catch (error) {
     console.error("Error adding points:", error);
-    return new Response(JSON.stringify({ error: "Failed to update points." }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+
+    return new Response(
+      JSON.stringify({ error: "Failed to update points." }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
   }
 };
 
+// Handle preflight requests for CORS
 export const OPTIONS = async () => {
   return new Response(null, {
-    status: 405,
-    headers: { Allow: "POST" },
+    status: 200,
+    headers: {
+      "Allow": "POST, OPTIONS",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+    },
   });
 };
