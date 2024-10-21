@@ -1,6 +1,6 @@
 {
   "name": "cocks",
-  "version": "0.1.0",
+  "version": "2.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.19.1",
+    "@telegram-apps/sdk": "^1.1.3",
     "@ton/core": "^0.59.0",
     "@tonconnect/sdk": "^3.0.5",
     "@tonconnect/ui-react": "^2.0.9",
