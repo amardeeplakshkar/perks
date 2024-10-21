@@ -16,7 +16,7 @@ const WelcomeSlider = () => {
     const [randomValue, setRandomValue] = useState(0);
     const [user, setUser] = useState(null);
     const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const value = Math.floor(Math.random() * (1500 - 700 + 1)) + 700;
@@ -104,18 +104,20 @@ const WelcomeSlider = () => {
     if (error) return <p>Error: {error}</p>;
 
     return (
-        <div className=" max-h-[90dvh] bg-black text-white relative bg-[url('https://i.pinimg.com/originals/cf/ec/88/cfec8819d8376a57c86e3c6e53ed618e.gif')]">
+        <div className="max-w-[100dvw] max-h-[90dvh] bg-black text-white bg-[url('https://i.pinimg.com/originals/cf/ec/88/cfec8819d8376a57c86e3c6e53ed618e.gif')]">
             <Slider ref={sliderRef} {...settings}>
                 {/* Slide 1 */}
-                <div className="flex flex-col items-center justify-center h-screen py-[6rem]">
+                <div className="flex flex-col items-center justify-center relative h-screen py-[6rem]">
                     <div className="flex justify-center items-center">
                         <div className="w-36 h-36 mb-6 bg-cover bg-[url('https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Smileys/Star%20Struck.webp')]" />
                     </div>
-                    <h2 className="text-3xl mb-4 text-center">👋 Hey {user?.firstName || 'there'}!</h2>
+                    <h2 className="text-3xl mb-4 text-center">👋 Hey {
+                    user?.firstName ||
+                     'there'}!</h2>
                     <p className="text-lg text-center px-4">
                         Welcome back! Get ready to claim your rewards 🐔
                     </p>
-                    <div className="mt-[6rem]">
+                    <div className="absolute bottom-[5rem] w-full">
                         <button
                             onClick={handleNext}
                             className="mt-6 px-6 py-3 w-full bg-yellow-600 hover:bg-yellow-700 text-white rounded-md"
@@ -126,7 +128,7 @@ const WelcomeSlider = () => {
                 </div>
 
                 {/* Slide 2 */}
-                <div className="flex flex-col items-center justify-center h-screen">
+                <div className="flex flex-col items-center justify-center h-screen relative">
                     <h2 className="text-2xl mb-6 text-center">🔍 Checking Your Account...</h2>
                     <div className="py-[4.5rem]">
                         {['Calculating Check Count', 'Activity Level Analysis', 'Checking OG Status'].map((title, index) => (
@@ -141,7 +143,7 @@ const WelcomeSlider = () => {
                             </div>
                         ))}
                     </div>
-                    <div className="mt-[2.5rem]">
+                    <div className="absolute bottom-[5rem] w-full">
                         <button
                             onClick={handleNext}
                             className="mt-6 px-6 py-3 w-full bg-yellow-600 hover:bg-yellow-700 text-white rounded-md"
@@ -152,7 +154,7 @@ const WelcomeSlider = () => {
                 </div>
 
                 {/* Slide 3 */}
-                <div className="flex flex-col items-center justify-center h-screen py-[4rem]">
+                <div className="flex flex-col items-center justify-center h-screen py-[4rem] relative">
                     <h1 className="text-4xl mb-2 text-center">Raising Star!</h1>
                     <p className="text-lg mb-4 text-center">You’ve Joined Telegram</p>
                     <div className="flex justify-center items-center">
@@ -161,9 +163,11 @@ const WelcomeSlider = () => {
                             </div>
                             </div>
                             <p className="text-lg text-center">
-                                Your Account ID is #{user.telegramId}. You're in the top 90% 🔥
+                                Your Account ID is 
+                                #{user.telegramId}
+                                . You're in the top 90% 🔥
                             </p>
-                            <div className="mt-[2.5rem]">
+                            <div className="absolute bottom-[5rem] w-full">
                                 <button
                                     onClick={handleNext}
                                     className="mt-6 px-6 py-3 w-full bg-yellow-600 hover:bg-yellow-700 text-white rounded-md"
@@ -173,17 +177,19 @@ const WelcomeSlider = () => {
                             </div>
                         </div>
 
-                        <div className="flex flex-col items-center justify-center h-screen py-[4rem]">
+                        <div className="flex flex-col items-center justify-center h-screen py-[4rem] relative">
                             <h2 className="text-3xl mb-4 text-center">You are Amazing</h2>
                             <p className="text-lg mb-2 text-center">Here is your COCKS reward</p>
                             <div className="flex justify-center">
                                 <div className="w-[12rem] h-[12rem] mb-6 bg-cover bg-[url('https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Animals%20and%20Nature/Chicken.webp')]" />
                             </div>
                             <h1 className="text-5xl font-bold text-center mb-4">{randomValue + 527}</h1>
-                            <div className="mt-[2.5rem]">
+                            <div className="absolute bottom-[5rem] w-full">
                                 <p className="text-lg text-center">Thanks for your time on Telegram 🐔</p>
                                 <button
-                                    onClick={handleClaimPoints}
+                                    onClick={
+                                         handleClaimPoints
+                                    }
                                     className="mt-6 px-6 py-3 w-full bg-yellow-600 hover:bg-yellow-700 text-white rounded-md"
                                 >
                                     Claim Points
