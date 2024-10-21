@@ -1,6 +1,6 @@
 'use client'
 
-import ReferralSystem from '@/components/ReferralSystem'
+import ReferralSystem from '../../../components/ReferralSystem'
 import { useEffect, useState } from 'react'
 
 export default function Home() {
