@@ -16,7 +16,7 @@ const WelcomeSlider = () => {
     const [randomValue, setRandomValue] = useState(0);
     const [user, setUser] = useState(null);
     const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const value = Math.floor(Math.random() * (1500 - 700 + 1)) + 700;
