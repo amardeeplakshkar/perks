@@ -5,8 +5,8 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Loader from "./Loader.jsx";
-import { useRouter } from "next/navigation"; 
-import { toast, ToastContainer } from 'react-toastify';
+import { useRouter } from "next/navigation";
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const WelcomeSlider = () => {
@@ -73,7 +73,7 @@ const WelcomeSlider = () => {
             const data = await response.json();
             if (response.ok) {
                 toast.success(`🎉 Points claimed! You now have ${data.user.points} points.`);
-                setTimeout(() => router.push("/"), 3000); // Redirect after 3 seconds
+                router.push("/"), 3000; // Redirect after 3 seconds
             } else {
                 toast.error(data.error || 'Something went wrong.');
             }
@@ -112,8 +112,8 @@ const WelcomeSlider = () => {
                         <div className="w-36 h-36 mb-6 bg-cover bg-[url('https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Smileys/Star%20Struck.webp')]" />
                     </div>
                     <h2 className="text-3xl mb-4 text-center">👋 Hey {
-                    user?.firstName ||
-                     'there'}!</h2>
+                        user?.firstName ||
+                        'there'}!</h2>
                     <p className="text-lg text-center px-4">
                         Welcome back! Get ready to claim your rewards 🐔
                     </p>
@@ -160,45 +160,45 @@ const WelcomeSlider = () => {
                     <div className="flex justify-center items-center">
                         <div className="text-7xl font-bold mb-2 h-[15rem] w-[15rem] bg-cover bg-[url('https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Animals%20and%20Nature/Unicorn.webp')] flex justify-center items-center">
                             <h1 className="text-7xl font-bold drop-shadow-[0_35px_35px_rgba(0,0,0,0.25)]">{randomValue}</h1>
-                            </div>
-                            </div>
-                            <p className="text-lg text-center">
-                                Your Account ID is 
-                                #{user.telegramId}
-                                . You're in the top 90% 🔥
-                            </p>
-                            <div className="absolute bottom-[5rem] w-full">
-                                <button
-                                    onClick={handleNext}
-                                    className="mt-6 px-6 py-3 w-full bg-yellow-600 hover:bg-yellow-700 text-white rounded-md"
-                                >
-                                    Continue
-                                </button>
-                            </div>
                         </div>
-
-                        <div className="flex flex-col items-center justify-center h-screen py-[4rem] relative">
-                            <h2 className="text-3xl mb-4 text-center">You are Amazing</h2>
-                            <p className="text-lg mb-2 text-center">Here is your COCKS reward</p>
-                            <div className="flex justify-center">
-                                <div className="w-[12rem] h-[12rem] mb-6 bg-cover bg-[url('https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Animals%20and%20Nature/Chicken.webp')]" />
-                            </div>
-                            <h1 className="text-5xl font-bold text-center mb-4">{randomValue + 527}</h1>
-                            <div className="absolute bottom-[5rem] w-full">
-                                <p className="text-lg text-center">Thanks for your time on Telegram 🐔</p>
-                                <button
-                                    onClick={
-                                         handleClaimPoints
-                                    }
-                                    className="mt-6 px-6 py-3 w-full bg-yellow-600 hover:bg-yellow-700 text-white rounded-md"
-                                >
-                                    Claim Points
-                                </button>
-                            </div>
-                        </div>
-                    </Slider>
+                    </div>
+                    <p className="text-lg text-center">
+                        Your Account ID is
+                        #{user.telegramId}
+                        . You're in the top 90% 🔥
+                    </p>
+                    <div className="absolute bottom-[5rem] w-full">
+                        <button
+                            onClick={handleNext}
+                            className="mt-6 px-6 py-3 w-full bg-yellow-600 hover:bg-yellow-700 text-white rounded-md"
+                        >
+                            Continue
+                        </button>
+                    </div>
                 </div>
-                );
+
+                <div className="flex flex-col items-center justify-center h-screen py-[4rem] relative">
+                    <h2 className="text-3xl mb-4 text-center">You are Amazing</h2>
+                    <p className="text-lg mb-2 text-center">Here is your COCKS reward</p>
+                    <div className="flex justify-center">
+                        <div className="w-[12rem] h-[12rem] mb-6 bg-cover bg-[url('https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Animals%20and%20Nature/Chicken.webp')]" />
+                    </div>
+                    <h1 className="text-5xl font-bold text-center mb-4">{randomValue + 527}</h1>
+                    <div className="absolute bottom-[5rem] w-full">
+                        <p className="text-lg text-center">Thanks for your time on Telegram 🐔</p>
+                        <button
+                            onClick={
+                                handleClaimPoints
+                            }
+                            className="mt-6 px-6 py-3 w-full bg-yellow-600 hover:bg-yellow-700 text-white rounded-md"
+                        >
+                            Claim Points
+                        </button>
+                    </div>
+                </div>
+            </Slider>
+        </div>
+    );
 };
 
-                export default WelcomeSlider;
+export default WelcomeSlider;

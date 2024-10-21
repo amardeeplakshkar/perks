@@ -1,35 +1,29 @@
-import React from 'react'
-import gify from "../app/public/1.png"
-import Image from "next/image"
+import React from "react";
 
 const GameCard = ({ card, handleChoice, flipped, disabled }) => {
-    const handleClick = () => {
-        if (!disabled) {
-          handleChoice(card);
-        }
-      };
-      const preventInteraction = (e) => {
-        e.preventDefault();
-      };
-    
-     
-      return (
-        <div className="card">
-          <div className={flipped ? "flipped" : ""}>
-            <Image className="bg-slate-500/10
-             front" src={card.src} alt="card front" />
-            <image
-              className="back no-interaction"
-              src={gify}
-              alt="card backword"
-              onContextMenu={preventInteraction}
-              onTouchStart={preventInteraction}
-              draggable={false}
-              onClick={handleClick}
-            />
-          </div>
-        </div>
-      );
-    }
-    
-export default GameCard
+  const handleClick = () => {
+    if (!disabled) handleChoice(card);
+  };
+
+  return (
+    <div 
+      className={`card bg-slate-500/10  rounded-lg cursor-pointer  ${
+        flipped ? "flipped" : ""
+      }`}
+      onClick={handleClick}
+    >
+      {flipped ? (
+        <img
+          src={card.src}
+          alt=""
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        // Back side with plain background
+        <div className="w-full h-full" />
+      )}
+    </div>
+  );
+};
+
+export default GameCard;

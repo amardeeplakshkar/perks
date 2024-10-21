@@ -3,25 +3,17 @@ import { FaCoins, FaEquals } from "react-icons/fa";
 import { MdFlipCameraAndroid } from "react-icons/md";
 import { useEffect, useState } from "react";
 import GameCard from "../../../components/GameCard";
-import Img1 from "../../public/1.png";
-import Img2 from "../../public/2.png";
-import Img3 from "../../public/3.png";
-import Img4 from "../../public/4.png";
-import Img5 from "../../public/5.png";
-import Img6 from "../../public/6.png";
-import Img7 from "../../public/7.png";
-import Img8 from "../../public/8.png";
-import { useRouter } from "next/navigation"; // for routing
+import { useRouter } from "next/navigation"; // For routing
 
 const cardImages = [
-  { src: Img1, matched: false },
-  { src: Img2, matched: false },
-  { src: Img3, matched: false },
-  { src: Img4, matched: false },
-  { src: Img5, matched: false },
-  { src: Img6, matched: false },
-  { src: Img7, matched: false },
-  { src: Img8, matched: false },
+  { src: "/1.png", matched: false },
+  { src: "/2.png", matched: false },
+  { src: "/3.png", matched: false },
+  { src: "/4.png", matched: false },
+  { src: "/5.png", matched: false },
+  { src: "/6.png", matched: false },
+  { src: "/7.png", matched: false },
+  { src: "/8.png", matched: false },
 ];
 
 const GamePage = () => {
@@ -33,11 +25,11 @@ const GamePage = () => {
   const [matches, setMatches] = useState(0);
   const [points, setPoints] = useState(0);
   const [gameComplete, setGameComplete] = useState(false);
-  const [user, setUser] = useState(null); // Store user data
+  const [user, setUser] = useState(null);
+  const [error, setError] = useState(null);
   const router = useRouter();
 
-  // Fetch user data on load
- 
+  // Fetch user data from Telegram on load
   useEffect(() => {
     if (typeof window !== "undefined" && window.Telegram?.WebApp) {
       const tg = window.Telegram.WebApp;
@@ -48,32 +40,24 @@ const GamePage = () => {
       if (initDataUnsafe.user) {
         fetch("/api/user", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(initDataUnsafe.user),
         })
           .then((res) => res.json())
           .then((data) => {
-            if (data.error) {
-              setError(data.error);
-            } else {
-              setUser(data);
-            }
+            if (data.error) setError(data.error);
+            else setUser(data);
           })
-          .catch((err) => {
-            setError("Failed to fetch user data: " + err.message);
-          });
+          .catch((err) => setError("Failed to fetch user data: " + err.message));
       } else {
         setError("No user data available");
       }
     } else {
-      setError("This app should be opened in Telegram");
+      setError("This app should be opened in Telegram.");
     }
   }, []);
 
-
-  // Shuffle cards and initialize state
+  // Shuffle and initialize cards
   const shuffleCards = () => {
     const shuffled = [...cardImages, ...cardImages]
       .sort(() => Math.random() - 0.5)
@@ -89,11 +73,11 @@ const GamePage = () => {
 
   // Handle card selection
   const handleChoice = (card) => {
-    if (firstChoice && firstChoice.id === card.id) return;
+    if (card.matched || (firstChoice && firstChoice.id === card.id)) return; // Prevent clicking matched cards or the same card twice
     firstChoice ? setSecondChoice(card) : setFirstChoice(card);
   };
 
-  // Compare two selected cards
+  // Compare selected cards
   useEffect(() => {
     if (firstChoice && secondChoice) {
       setDisabled(true);
@@ -108,52 +92,46 @@ const GamePage = () => {
         );
         resetTurn();
       } else {
-        setTimeout(() => resetTurn(), 1000);
+        const timeout = setTimeout(() => resetTurn(), 1000);
+        return () => clearTimeout(timeout); // Cleanup timeout
       }
     }
   }, [firstChoice, secondChoice]);
 
-  // Calculate points and check game completion
+  // Calculate points and check if the game is complete
   useEffect(() => {
     if (attempts > 0) {
       const efficiency = Math.floor((matches / attempts) * 100);
       setPoints(efficiency * 10);
     }
 
-    if (matches === cardImages.length) {
-      setGameComplete(true); // Mark game complete
-    }
+    if (matches === cardImages.length) setGameComplete(true);
   }, [matches, attempts]);
 
-  // Reset the selected cards
+  // Reset card selections
   const resetTurn = () => {
     setFirstChoice(null);
     setSecondChoice(null);
     setDisabled(false);
   };
 
-  // Send points to the backend and update user balance
+  // Claim points and update user data
   const handleClaim = async () => {
     if (!user) return;
-  
+
     try {
       const response = await fetch("/api/add-points", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: user.telegramId, points }),
       });
-  console.log(user, user.telegramId, points);
-  
-      if (response.ok) {
-        router.push("/"); // Redirect after claiming
-      } else {
-        console.error("Failed to update points");
-      }
+
+      if (response.ok) router.push("/"); // Redirect after claiming points
+      else console.error("Failed to update points");
     } catch (error) {
       console.error("Error:", error);
     }
   };
-  
 
   // Shuffle cards on first render
   useEffect(() => {
@@ -163,22 +141,11 @@ const GamePage = () => {
   return (
     <div className="container">
       <h1>Flip Game</h1>
+
       <div className="stats flex gap-5 pb-5">
-        <div className="bg-slate-500/10 rounded-lg p-2 flex flex-col items-center gap-1">
-          <MdFlipCameraAndroid size={20} />
-          <p className="text-xs">Attempts</p>
-          {attempts}
-        </div>
-        <div className="bg-slate-500/10 rounded-lg p-2 flex flex-col items-center gap-1">
-          <FaEquals size={20} />
-          <p className="text-xs">Matches</p>
-          {matches}
-        </div>
-        <div className="bg-slate-500/10 rounded-lg p-2 flex flex-col items-center gap-1">
-          <FaCoins size={20} />
-          <p className="text-xs">Points</p>
-          {points}
-        </div>
+        <StatBox icon={<MdFlipCameraAndroid size={20} />} label="Attempts" value={attempts} />
+        <StatBox icon={<FaEquals size={20} />} label="Matches" value={matches} />
+        <StatBox icon={<FaCoins size={20} />} label="Points" value={points} />
       </div>
 
       <div className="cardGrid">
@@ -187,9 +154,7 @@ const GamePage = () => {
             key={card.id}
             card={card}
             handleChoice={handleChoice}
-            flipped={
-              card === firstChoice || card === secondChoice || card.matched
-            }
+            flipped={card === firstChoice || card === secondChoice || card.matched}
             disabled={disabled}
           />
         ))}
@@ -203,8 +168,18 @@ const GamePage = () => {
           Claim Your Reward!
         </button>
       )}
+
+      {error && <p className="error">{error}</p>}
     </div>
   );
 };
+
+const StatBox = ({ icon, label, value }) => (
+  <div className="bg-slate-500/10 rounded-lg p-2 flex flex-col items-center gap-1">
+    {icon}
+    <p className="text-xs">{label}</p>
+    {value}
+  </div>
+);
 
 export default GamePage;
