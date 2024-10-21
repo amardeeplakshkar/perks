@@ -102,7 +102,8 @@ const Leaderboard = () => {
         <Card
           bg={"bg-white/10"}
           rank="⭐" // Current user's rank symbol (or adjust as needed)
-          amount={user.points} // Current user's points
+          amount={user.points}
+          telegramId={user.telegramId}
           username={user.firstName || "🐓Cocks User"}
         />
         {notification && <p className="text-green-500">{notification}</p>}
@@ -114,6 +115,7 @@ const Leaderboard = () => {
             key={topUser.telegramId}
             rank={getRankEmoji(index)}
             amount={topUser.points}
+            telegramId={user.telegramId}
             username={topUser.firstName || "Anonymous"}
           />
         ))}
