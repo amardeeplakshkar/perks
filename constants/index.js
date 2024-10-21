@@ -28,11 +28,6 @@ export const ROUTES = [
     icon: FaUserGroup,
     href: "/friends",
   },
-  {
-    label:"Welcome",
-    icon: FaUserGroup,
-    href: "/welcome"
-  }
 ];
 
 export const TASKS = [

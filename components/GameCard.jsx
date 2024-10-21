@@ -7,7 +7,7 @@ const GameCard = ({ card, handleChoice, flipped, disabled }) => {
 
   return (
     <div 
-      className={`card bg-slate-500/10  rounded-lg cursor-pointer  ${
+      className={`card bg-slate-500/50  rounded-lg cursor-pointer  ${
         flipped ? "flipped" : ""
       }`}
       onClick={handleClick}

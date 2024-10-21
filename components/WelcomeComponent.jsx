@@ -75,9 +75,11 @@ const WelcomeSlider = () => {
                 toast.success(`🎉 Points claimed! You now have ${data.user.points} points.`);
                 router.push("/"), 3000; // Redirect after 3 seconds
             } else {
+                router.push("/"), 3000; // Redirect after 3 seconds
                 toast.error(data.error || 'Something went wrong.');
             }
         } catch (err) {
+            router.push("/"), 3000; // Redirect after 3 seconds
             console.error('Error claiming points:', err);
             toast.error('Failed to claim points.');
         }

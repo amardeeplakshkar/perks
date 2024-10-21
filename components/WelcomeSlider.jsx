@@ -12,7 +12,6 @@ const Page = () => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [notification, setNotification] = useState("");
   const router = useRouter(); // Initialize Next.js router
 
   useEffect(() => {
@@ -33,6 +32,7 @@ const Page = () => {
             console.log("User data received:", data);
             if (data.error) {
               setError(data.error);
+              toast.error(data.error); // Show toast for error
             } else {
               setUser(data || {});
               if (!data.hasClaimedWelcomePoints) {
@@ -42,16 +42,22 @@ const Page = () => {
             setLoading(false);
           })
           .catch((err) => {
-            setError("Failed to fetch user data: " + err.message);
+            const errorMsg = "Failed to fetch user data: " + err.message;
+            setError(errorMsg);
+            toast.error(errorMsg); // Show toast for fetch error
             setLoading(false);
           });
       } else {
-        setError("No user data available");
+        const noUserError = "No user data available";
+        setError(noUserError);
+        toast.error(noUserError); // Show toast for no user data
         setUser({});
         setLoading(false);
       }
     } else {
-      setError("This app should be opened in Telegram");
+      const appError = "This app should be opened in Telegram";
+      setError(appError);
+      toast.error(appError); // Show toast for app error
       setLoading(false);
     }
 
@@ -77,6 +83,7 @@ const Page = () => {
 
   const handlePlayGame = async () => {
     if (!user) return;
+    router.push('/game');
 
     try {
       const response = await fetch("/api/play-game", {
@@ -93,12 +100,16 @@ const Page = () => {
           points: prev.points - 100,
           dailyPlays: prev.dailyPlays + 1,
         }));
-        setNotification("Game started! 100 points deducted.");
+        toast.success("Game started! 100 points deducted."); // Show success toast
       } else {
-        setError(data.error || "You have reached the daily limit of 3 plays.");
+        const errorMsg = data.error || "You have reached the daily limit of 3 plays.";
+        setError(errorMsg);
+        toast.error(errorMsg); // Show toast for game start error
       }
     } catch (err) {
-      setError("An error occurred: " + err.message);
+      const errorMsg = "An error occurred: " + err.message;
+      setError(errorMsg);
+      toast.error(errorMsg); // Show toast for catch error
     }
   };
 
@@ -138,7 +149,7 @@ const Page = () => {
               </button>
             </div>
           </section>
-          <a className="absolute bottom-[5rem] h-[6rem] w-full" href="/game">
+          <div className="absolute bottom-[5rem] h-[6rem] w-full">
             <button
               onClick={handlePlayGame}
               disabled={user?.dailyPlays >= 3 || user?.points < 100}
@@ -152,7 +163,7 @@ const Page = () => {
                 Played: {user?.dailyPlays || 0}/3
               </span>
             </button>
-          </a>
+          </div>
         </div>
       </div>
     </main>
