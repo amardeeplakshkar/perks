@@ -10,7 +10,7 @@ interface ReferralSystemProps {
 const ReferralSystem: React.FC<ReferralSystemProps> = ({ initData, userId, startParam }) => {
     const [referrals, setReferrals] = useState<string[]>([])
     const [referrer, setReferrer] = useState<string | null>(null)
-    const INVITE_URL = "https://t.me/crabscryptobot/start"
+    const INVITE_URL = "https://t.me/cockscryptobot/start"
 
     useEffect(() => {
         const checkReferral = async () => {
@@ -20,10 +20,10 @@ const ReferralSystem: React.FC<ReferralSystemProps> = ({ initData, userId, start
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ userId, referrerId: startParam }),
-                    });
-                    if (!response.ok) throw new Error('Failed to save referral');
+                    })
+                    if (!response.ok) throw new Error('Failed to save referral')
                 } catch (error) {
-                    console.error('Error saving referral:', error);
+                    console.error('Error saving referral:', error)
                 }
             }
         }
@@ -31,31 +31,37 @@ const ReferralSystem: React.FC<ReferralSystemProps> = ({ initData, userId, start
         const fetchReferrals = async () => {
             if (userId) {
                 try {
-                    const response = await fetch(`/api/referrals?userId=${userId}`);
-                    if (!response.ok) throw new Error('Failed to fetch referrals');
-                    const data = await response.json();
-                    setReferrals(data.referrals);
-                    setReferrer(data.referrer);
+                    const response = await fetch(`/api/referrals?userId=${userId}`)
+                    if (!response.ok) throw new Error('Failed to fetch referrals')
+                    const data = await response.json()
+                    setReferrals(data.referrals)
+                    setReferrer(data.referrer)
                 } catch (error) {
-                    console.error('Error fetching referrals:', error);
+                    console.error('Error fetching referrals:', error)
                 }
             }
         }
 
-        checkReferral();
-        fetchReferrals();
+        checkReferral()
+        fetchReferrals()
     }, [userId, startParam])
 
+    const utils = initUtils() // Initialize utils only once
+
     const handleInviteFriend = () => {
-        const utils = initUtils()
-        const inviteLink = `${INVITE_URL}?startapp=${userId}`
+        const inviteLink = `${INVITE_URL}?start=${userId}`
         const shareText = `Join me on this awesome Telegram mini app!`
         const fullUrl = `https://t.me/share/url?url=${encodeURIComponent(inviteLink)}&text=${encodeURIComponent(shareText)}`
-        utils.openTelegramLink(fullUrl)
+
+        try {
+            utils.openTelegramLink(fullUrl) // Ensure the SDK method is called correctly
+        } catch (error) {
+            console.error('Error opening Telegram link:', error)
+        }
     }
 
     const handleCopyLink = () => {
-        const inviteLink = `${INVITE_URL}?startapp=${userId}`
+        const inviteLink = `${INVITE_URL}?start=${userId}`
         navigator.clipboard.writeText(inviteLink)
         alert('Invite link copied to clipboard!')
     }
