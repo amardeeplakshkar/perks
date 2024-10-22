@@ -1,9 +1,15 @@
 'use client'
-
+import Card from "../../../components/Card";
+import Logo from "../../../app/favicon.ico";
+import Image from "next/image";
+import Link from "next/link";
 import ReferralSystem from '../../../components/ReferralSystem'
 import { useEffect, useState } from 'react'
 
 export default function Home() {
+  const preventInteraction = (e) => {
+    e.preventDefault();
+  };
   const [initData, setInitData] = useState('')
   const [userId, setUserId] = useState('')
   const [startParam, setStartParam] = useState('')
@@ -23,9 +29,8 @@ export default function Home() {
   }, [])
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <h1 className="text-4xl font-bold mb-8">Telegram Referral Demo</h1>
+    <>
       <ReferralSystem initData={initData} userId={userId} startParam={startParam} />
-    </main>
+    </>
   )
 }

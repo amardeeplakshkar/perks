@@ -9,21 +9,26 @@ generator client {
 
 model User {
   id                     String           @id @default(auto()) @map("_id") @db.ObjectId
-  telegramId            Int              @unique
+  telegramId             Int              @unique
   username               String?
-  firstName             String?
-  lastName              String?
-  points                Int              @default(0)
-  hasClaimedWelcomePoints Boolean         @default(false)
-  isNewUser             Boolean          @default(true)
-  createdAt             DateTime         @default(now())
-  updatedAt             DateTime         @updatedAt
-  dailyPlays            Int              @default(0)
-  lastPlayedDate        DateTime?
-  walletAddress         String?          // Store connected TON wallet address
-  isWalletConnected     Boolean          @default(false)
-  transactions          Transaction[]
-  taskCompletions      TaskCompletion[]  // Relation to track task completions
+  firstName              String?
+  lastName               String?
+  points                 Int              @default(0)
+  hasClaimedWelcomePoints Boolean          @default(false)
+  isNewUser              Boolean          @default(true)
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @updatedAt
+  dailyPlays             Int              @default(0)
+  lastPlayedDate         DateTime?
+  walletAddress          String?          // Store connected TON wallet address
+  isWalletConnected      Boolean          @default(false)
+  transactions           Transaction[]
+  taskCompletions        TaskCompletion[] // Relation to track task completions
+
+  // Referrals
+  referrals               User[]           @relation("UserReferrals")
+  referredBy              User?            @relation("UserReferrals", fields: [referredByTelegramId], references: [telegramId], onDelete: NoAction, onUpdate: NoAction)
+  referredByTelegramId    Int?             // Store referrer’s telegramId
 }
 
 model Task {
