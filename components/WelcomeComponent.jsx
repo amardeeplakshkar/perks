@@ -160,7 +160,7 @@ const WelcomeSlider = () => {
                     <h1 className="text-4xl mb-2 text-center">Raising Star!</h1>
                     <p className="text-lg mb-4 text-center">You’ve Joined Telegram</p>
                     <div className="flex justify-center items-center">
-                        <div className="text-7xl font-bold mb-2 h-[15rem] w-[15rem] bg-cover bg-[url('https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Animals%20and%20Nature/Unicorn.webp')] flex justify-center items-center">
+                        <div className="text-7xl font-bold mb-2 h-[15rem] w-[15rem] bg-cover bg-[url('https://cdn.fullyst.com/stickers/b9f1c4ec-ff51-507f-a011-b3c035880c92/full/AgADNgMAAhOiGEQ.webp')] flex justify-center items-center">
                             <h1 className="text-7xl font-bold drop-shadow-[0_35px_35px_rgba(0,0,0,0.25)]">{randomValue}</h1>
                         </div>
                     </div>
