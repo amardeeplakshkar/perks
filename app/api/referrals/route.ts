@@ -1,5 +1,4 @@
 import { prisma } from '../../../lib/prisma';
-import { getReferrals, getReferrer, saveReferral } from '../../../lib/storage';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
@@ -13,7 +12,7 @@ export async function POST(request: NextRequest) {
   try {
     // Find the referrer by telegramId
     const referrer = await prisma.user.findUnique({
-      where: { telegramId: parseInt(referrerId) }
+      where: { telegramId: parseInt(referrerId) },
     });
 
     // If referrer does not exist, return an error
@@ -26,7 +25,7 @@ export async function POST(request: NextRequest) {
       where: { telegramId: parseInt(userId) },
       update: {
         referredByTelegramId: referrer.telegramId,
-        isNewUser: false,  // Mark user as not new once referred
+        isNewUser: false, // Mark user as not new once referred
       },
       create: {
         telegramId: parseInt(userId),
@@ -34,6 +33,21 @@ export async function POST(request: NextRequest) {
         isNewUser: false,
       },
     });
+
+    // Check if the user is newly referred (i.e., the user was just created)
+    const isNewReferral = user.isNewUser;
+
+    // If it's a new referral, update the referrer's points
+    if (isNewReferral) {
+      await prisma.user.update({
+        where: { telegramId: referrer.telegramId },
+        data: {
+          points: {
+            increment: 500, // Increment the referrer's points by 500
+          },
+        },
+      });
+    }
 
     return NextResponse.json({ success: true, user });
   } catch (error) {
