@@ -106,7 +106,7 @@ const ReferralSystem: React.FC<ReferralSystemProps> = ({ initData, userId, start
         Invite Friends and <br /> get more $COCKS
       </h2>
       <Image
-        src='/6.png'
+        src='https://res.cloudinary.com/duscymcfc/image/upload/f_auto,q_auto/v1/Cocks/logo'
         alt="Cocks Logo"
         height={150}
         width={150}
@@ -122,7 +122,7 @@ const ReferralSystem: React.FC<ReferralSystemProps> = ({ initData, userId, start
       </div>
       <h3 className="text-xl font-bold place-self-start">Total Friends</h3>
       <div className="flex-grow overflow-y-auto max-h-[calc(100dvh-70dvh)]  w-full overflow-x-hidden ">
-        {referrals.length > 0 && (
+        {referrals.length > 0 ? (
           <>
             {referrals.map((referral, index) => {
               const randomColorClass = getRandomBrightColorClass(); // Generate random color for each user
@@ -130,7 +130,7 @@ const ReferralSystem: React.FC<ReferralSystemProps> = ({ initData, userId, start
                 <div key={index}
                   className={`flex justify-between items-center p-2 rounded-lg w-full bg-slate-500/20 mt-1`}
                 >
-                  <div className="flex justify-center items-center gap-2">
+                  <div className="flex items-center justify-center gap-2">
                     <div
                       className={`h-[3rem] aspect-square rounded-full uppercase flex justify-center items-center ${randomColorClass}`}
                     >
@@ -156,6 +156,10 @@ const ReferralSystem: React.FC<ReferralSystemProps> = ({ initData, userId, start
               );
             })}
           </>
+        ) : (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-lg font-semibold text-gray-500">No referrals yet.</p>
+          </div>
         )}
       </div>
     </main>

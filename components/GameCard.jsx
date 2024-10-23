@@ -1,22 +1,27 @@
+import Image from "next/image";
 import React from "react";
 
-const GameCard = ({ card, handleChoice, flipped, disabled }) => {
-  const handleClick = () => {
+const GameCard = ({ card, handleChoice, flipped, disabled }) =>
+{
+  const handleClick = () =>
+  {
     if (!disabled) handleChoice(card);
   };
 
   return (
-    <div 
-      className={`card bg-slate-500/50  rounded-lg cursor-pointer  ${
-        flipped ? "flipped" : ""
-      }`}
+    <div
+      className={`card bg-slate-500/50  rounded-lg cursor-pointer  ${flipped ? "flipped" : ""
+        }`}
       onClick={handleClick}
     >
       {flipped ? (
-        <img
+        <Image
           src={card.src}
-          alt=""
-          className="w-full h-full object-cover"
+          alt="cocks"
+          className="object-cover w-full h-full"
+          width={100}
+          height={100}
+          priority
         />
       ) : (
         // Back side with plain background

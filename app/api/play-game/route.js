@@ -18,12 +18,16 @@ export async function POST(req) {
       return NextResponse.json({ error: "User not found." }, { status: 404 });
     }
 
-    const today = new Date();
-    const todayString = today.toISOString().split("T")[0]; // Format: YYYY-MM-DD
+    const now = new Date();
 
-    // Reset daily plays if last played date is not today
-    if (user.lastPlayedDate?.toISOString().split("T")[0] !== todayString) {
-      user.dailyPlays = 0; // Reset daily plays
+    // Reset daily plays if last played was more than 8 hours ago
+    if (user.lastPlayedDate) {
+      const lastPlayed = new Date(user.lastPlayedDate);
+      const hoursSinceLastPlay = Math.abs(now - lastPlayed) / 36e5; // Calculate hours difference
+
+      if (hoursSinceLastPlay >= 8) {
+        user.dailyPlays = 0; // Reset daily plays if more than 8 hours have passed
+      }
     }
 
     // Check if the user has reached the daily limit of plays
@@ -48,7 +52,7 @@ export async function POST(req) {
       data: {
         points: user.points - 100, // Deduct 100 points
         dailyPlays: user.dailyPlays + 1, // Increment daily plays
-        lastPlayedDate: today, // Update lastPlayedDate to today's date
+        lastPlayedDate: now, // Update lastPlayedDate to the current date and time
       },
     });
 

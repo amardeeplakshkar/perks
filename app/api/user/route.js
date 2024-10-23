@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { prisma } from "../../../lib/prisma";
 
 // GET user with completed tasks
-// GET user with completed tasks
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
@@ -24,7 +23,8 @@ export async function GET(req) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const completedTaskIds = user.taskCompletions.map((tc) => tc.taskId);
+    // Ensure taskCompletions is defined and is an array
+    const completedTaskIds = user.taskCompletions ? user.taskCompletions.map((tc) => tc.taskId) : [];
 
     return NextResponse.json({
       telegramId: user.telegramId,
@@ -45,7 +45,6 @@ export async function GET(req) {
   }
 }
 
-// POST to create or fetch a user
 // POST to create or fetch a user
 export async function POST(req) {
   try {
@@ -77,7 +76,8 @@ export async function POST(req) {
       });
     }
 
-    const completedTaskIds = user.taskCompletions.map((tc) => tc.taskId);
+    // Ensure taskCompletions is defined and is an array
+    const completedTaskIds = user.taskCompletions ? user.taskCompletions.map((tc) => tc.taskId) : [];
 
     return NextResponse.json({
       telegramId: user.telegramId,

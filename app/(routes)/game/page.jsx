@@ -1,22 +1,32 @@
 "use client";
+import { useEffect, useState } from "react";
 import { FaCoins, FaEquals } from "react-icons/fa";
 import { MdFlipCameraAndroid } from "react-icons/md";
-import { useEffect, useState } from "react";
 import GameCard from "../../../components/GameCard";
 import { useRouter } from "next/navigation"; // For routing
 
 const cardImages = [
-  { src: "/1.png", matched: false },
-  { src: "/2.png", matched: false },
-  { src: "/3.png", matched: false },
-  { src: "/4.png", matched: false },
-  { src: "/5.png", matched: false },
-  { src: "/6.png", matched: false },
-  { src: "/7.png", matched: false },
-  { src: "/8.png", matched: false },
+  { src: "https://res.cloudinary.com/duscymcfc/image/upload/f_auto,q_auto,h_100,w_10/v1/Cocks/c4cppsagk4mpcqx1qjhz", matched: false },
+  { src: "https://res.cloudinary.com/duscymcfc/image/upload/f_auto,q_auto,h_100,w_10/v1/Cocks/k6cdgd0plq1osbdnuitx", matched: false },
+  { src: "https://res.cloudinary.com/duscymcfc/image/upload/f_auto,q_auto,h_100,w_10/v1/Cocks/a2ir2kk4b9ummkvz8hmg", matched: false },
+  { src: "https://res.cloudinary.com/duscymcfc/image/upload/f_auto,q_auto,h_100,w_10/v1/Cocks/zbzsy3z9ohfsurtp5r8p", matched: false },
+  { src: "https://res.cloudinary.com/duscymcfc/image/upload/f_auto,q_auto,h_100,w_10/v1/Cocks/upb371qs5fda4riimerh", matched: false },
+  { src: "https://res.cloudinary.com/duscymcfc/image/upload/f_auto,q_auto,h_100,w_10/v1/Cocks/logo", matched: false },
+  { src: "https://res.cloudinary.com/duscymcfc/image/upload/f_auto,q_auto,h_100,w_10/v1/Cocks/brqp7iaxopw92qxga2is", matched: false },
+  { src: "https://res.cloudinary.com/duscymcfc/image/upload/f_auto,q_auto,h_100,w_10/v1/Cocks/iqi1ysev30t8b8l8z5rn", matched: false },
 ];
 
-const GamePage = () => {
+const preloadImages = (images) =>
+{
+  images.forEach((image) =>
+  {
+    const img = new Image();
+    img.src = image.src;
+  });
+};
+
+const GamePage = () =>
+{
   const [cards, setCards] = useState([]);
   const [firstChoice, setFirstChoice] = useState(null);
   const [secondChoice, setSecondChoice] = useState(null);
@@ -29,36 +39,49 @@ const GamePage = () => {
   const [error, setError] = useState(null);
   const router = useRouter();
 
+  // Preload images on component mount
+  useEffect(() =>
+  {
+    preloadImages(cardImages);
+  }, []);
+
   // Fetch user data from Telegram on load
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.Telegram?.WebApp) {
+  useEffect(() =>
+  {
+    if (typeof window !== "undefined" && window.Telegram?.WebApp)
+    {
       const tg = window.Telegram.WebApp;
       tg.ready();
 
       const initDataUnsafe = tg.initDataUnsafe || {};
 
-      if (initDataUnsafe.user) {
+      if (initDataUnsafe.user)
+      {
         fetch("/api/user", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(initDataUnsafe.user),
         })
           .then((res) => res.json())
-          .then((data) => {
+          .then((data) =>
+          {
             if (data.error) setError(data.error);
             else setUser(data);
           })
           .catch((err) => setError("Failed to fetch user data: " + err.message));
-      } else {
+      } else
+      {
         setError("No user data available");
       }
-    } else {
+    } else
+    {
       setError("This app should be opened in Telegram.");
     }
   }, []);
 
   // Shuffle and initialize cards
-  const shuffleCards = () => {
+  const shuffleCards = () =>
+  {
     const shuffled = [...cardImages, ...cardImages]
       .sort(() => Math.random() - 0.5)
       .map((card) => ({ ...card, id: Math.random() }));
@@ -70,20 +93,23 @@ const GamePage = () => {
     setPoints(0);
     setGameComplete(false);
   };
-
   // Handle card selection
-  const handleChoice = (card) => {
+  const handleChoice = (card) =>
+  {
     if (card.matched || (firstChoice && firstChoice.id === card.id)) return; // Prevent clicking matched cards or the same card twice
     firstChoice ? setSecondChoice(card) : setFirstChoice(card);
   };
 
   // Compare selected cards
-  useEffect(() => {
-    if (firstChoice && secondChoice) {
+  useEffect(() =>
+  {
+    if (firstChoice && secondChoice)
+    {
       setDisabled(true);
       setAttempts((prev) => prev + 1);
 
-      if (firstChoice.src === secondChoice.src) {
+      if (firstChoice.src === secondChoice.src)
+      {
         setMatches((prev) => prev + 1);
         setCards((prevCards) =>
           prevCards.map((card) =>
@@ -91,7 +117,8 @@ const GamePage = () => {
           )
         );
         resetTurn();
-      } else {
+      } else
+      {
         const timeout = setTimeout(() => resetTurn(), 1000);
         return () => clearTimeout(timeout); // Cleanup timeout
       }
@@ -99,8 +126,10 @@ const GamePage = () => {
   }, [firstChoice, secondChoice]);
 
   // Calculate points and check if the game is complete
-  useEffect(() => {
-    if (attempts > 0) {
+  useEffect(() =>
+  {
+    if (attempts > 0)
+    {
       const efficiency = Math.floor((matches / attempts) * 100);
       setPoints(efficiency * 10);
     }
@@ -109,17 +138,20 @@ const GamePage = () => {
   }, [matches, attempts]);
 
   // Reset card selections
-  const resetTurn = () => {
+  const resetTurn = () =>
+  {
     setFirstChoice(null);
     setSecondChoice(null);
     setDisabled(false);
   };
 
   // Claim points and update user data
-  const handleClaim = async () => {
+  const handleClaim = async () =>
+  {
     if (!user) return;
 
-    try {
+    try
+    {
       const response = await fetch("/api/add-points", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -128,13 +160,15 @@ const GamePage = () => {
 
       if (response.ok) router.push("/"); // Redirect after claiming points
       else console.error("Failed to update points");
-    } catch (error) {
+    } catch (error)
+    {
       console.error("Error:", error);
     }
   };
 
   // Shuffle cards on first render
-  useEffect(() => {
+  useEffect(() =>
+  {
     shuffleCards();
   }, []);
 
@@ -142,7 +176,7 @@ const GamePage = () => {
     <div className="container">
       <h1>Flip Game</h1>
 
-      <div className="stats flex gap-5 pb-5">
+      <div className="flex gap-5 pb-5 stats">
         <StatBox icon={<MdFlipCameraAndroid size={20} />} label="Attempts" value={attempts} />
         <StatBox icon={<FaEquals size={20} />} label="Matches" value={matches} />
         <StatBox icon={<FaCoins size={20} />} label="Points" value={points} />
@@ -163,7 +197,7 @@ const GamePage = () => {
       {gameComplete && (
         <button
           onClick={handleClaim}
-          className="mt-5 bg-green-500 text-white p-3 rounded-lg hover:bg-green-600"
+          className="p-3 mt-5 text-white bg-green-500 rounded-lg hover:bg-green-600"
         >
           Claim Your Reward!
         </button>
@@ -175,7 +209,7 @@ const GamePage = () => {
 };
 
 const StatBox = ({ icon, label, value }) => (
-  <div className="bg-slate-500/10 rounded-lg p-2 flex flex-col items-center gap-1">
+  <div className="flex flex-col items-center gap-1 p-2 rounded-lg bg-slate-500/10">
     {icon}
     <p className="text-xs">{label}</p>
     {value}
