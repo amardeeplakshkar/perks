@@ -38,7 +38,6 @@ const ReferralSystem: React.FC<ReferralSystemProps> = ({ initData, userId, start
   const [profilePic, setProfilePic] = useState<string | null>(null); // State for profile picture
   const [loading, setLoading] = useState<boolean>(true);
   const INVITE_URL = "https://t.me/cockscryptobot/start";
-  const RandomColor = getRandomBrightColorClass();
 
   useEffect(() => {
     const checkReferral = async () => {
@@ -125,34 +124,37 @@ const ReferralSystem: React.FC<ReferralSystemProps> = ({ initData, userId, start
       <div className="flex-grow overflow-y-auto max-h-[calc(100dvh-70dvh)]  w-full overflow-x-hidden ">
         {referrals.length > 0 && (
           <>
-            {referrals.map((referral, index) => (
-              <div key={index}
-                className={`flex justify-between items-center p-2 rounded-lg w-full bg-slate-500/20 mt-1`}
-              >
-                <div className="flex justify-center items-center gap-2">
-                  <div
-                    className={`h-[3rem] aspect-square rounded-full uppercase flex justify-center items-center ${RandomColor}`}
-                  >
-                    {profilePic ? (
-                      <Image
-                        src={profilePic}
-                        alt="User Profile Picture"
-                        height={150}
-                        width={150}
-                        className="rounded-full"
-                      />
-                    ) : (
-                      <span>{referral.username.slice(0, 2) || referral.firstName.slice(0, 2)}</span>
-                    )}
-                  </div>
+            {referrals.map((referral, index) => {
+              const randomColorClass = getRandomBrightColorClass(); // Generate random color for each user
+              return (
+                <div key={index}
+                  className={`flex justify-between items-center p-2 rounded-lg w-full bg-slate-500/20 mt-1`}
+                >
+                  <div className="flex justify-center items-center gap-2">
+                    <div
+                      className={`h-[3rem] aspect-square rounded-full uppercase flex justify-center items-center ${randomColorClass}`}
+                    >
+                      {profilePic ? (
+                        <Image
+                          src={profilePic}
+                          alt="User Profile Picture"
+                          height={150}
+                          width={150}
+                          className="rounded-full"
+                        />
+                      ) : (
+                        <span>{referral.username?.slice(0, 2) || referral.firstName?.slice(0, 2)}</span>
+                      )}
+                    </div>
 
-                  <div>
-                    <h4 className="text-sm font-bold">{referral.username || referral.firstName}</h4>
+                    <div>
+                      <h4 className="text-sm font-bold">{referral.username || referral.firstName}</h4>
+                    </div>
                   </div>
+                  <p className="font-bold">+500</p>
                 </div>
-                <p className="font-bold">+500</p>
-              </div>
-            ))}
+              );
+            })}
           </>
         )}
       </div>
