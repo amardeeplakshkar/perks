@@ -40,33 +40,20 @@ const ReferralSystem: React.FC<ReferralSystemProps> = ({ initData, userId, start
   const INVITE_URL = "https://t.me/cockscryptobot/start";
 
   useEffect(() => {
-    const checkReferral = async () => {
+   const checkReferral = async () => {
       if (startParam && userId) {
         try {
-          // Save the referral first
-          const referralResponse = await fetch('/api/referrals', {
+          const response = await fetch('/api/referrals', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId, referrerId: startParam }),
           });
-
-          if (!referralResponse.ok) throw new Error('Failed to save referral');
-
-          // If referral is saved, add points to the user
-          const pointsResponse = await fetch('/api/add-points', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId: startParam, points: 752 }), // 500 points to be added
-          });
-
-          if (!pointsResponse.ok) throw new Error('Failed to add points');
-
-          console.log('Points added successfully');
+          if (!response.ok) throw new Error('Failed to save referral');
         } catch (error) {
-          console.error('Error:', error);
+          console.error('Error saving referral:', error);
         }
       }
-    };
+   }
 
 
     const fetchReferrals = async () => {
