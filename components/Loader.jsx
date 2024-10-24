@@ -27,7 +27,7 @@ const Loader = () =>
     const interval = setInterval(() =>
     {
       triggerTransition();
-    }, 3000); // Adjust as needed
+    }, 2000); // Adjust as needed
 
     return () => clearInterval(interval); // Clean up on unmount
   }, []);

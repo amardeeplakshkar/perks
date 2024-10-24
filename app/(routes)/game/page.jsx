@@ -6,14 +6,14 @@ import GameCard from "../../../components/GameCard";
 import { useRouter } from "next/navigation"; // For routing
 
 const cardImages = [
-  { src: "https://res.cloudinary.com/duscymcfc/image/upload/f_auto,q_auto,h_100,w_10/v1/Cocks/c4cppsagk4mpcqx1qjhz", matched: false },
-  { src: "https://res.cloudinary.com/duscymcfc/image/upload/f_auto,q_auto,h_100,w_10/v1/Cocks/k6cdgd0plq1osbdnuitx", matched: false },
-  { src: "https://res.cloudinary.com/duscymcfc/image/upload/f_auto,q_auto,h_100,w_10/v1/Cocks/a2ir2kk4b9ummkvz8hmg", matched: false },
-  { src: "https://res.cloudinary.com/duscymcfc/image/upload/f_auto,q_auto,h_100,w_10/v1/Cocks/zbzsy3z9ohfsurtp5r8p", matched: false },
-  { src: "https://res.cloudinary.com/duscymcfc/image/upload/f_auto,q_auto,h_100,w_10/v1/Cocks/upb371qs5fda4riimerh", matched: false },
-  { src: "https://res.cloudinary.com/duscymcfc/image/upload/f_auto,q_auto,h_100,w_10/v1/Cocks/logo", matched: false },
-  { src: "https://res.cloudinary.com/duscymcfc/image/upload/f_auto,q_auto,h_100,w_10/v1/Cocks/brqp7iaxopw92qxga2is", matched: false },
-  { src: "https://res.cloudinary.com/duscymcfc/image/upload/f_auto,q_auto,h_100,w_10/v1/Cocks/iqi1ysev30t8b8l8z5rn", matched: false },
+  { src: "https://res.cloudinary.com/duscymcfc/image/upload/f_auto,q_auto,h_200,w_200/v1/Cocks/c4cppsagk4mpcqx1qjhz", matched: false },
+  { src: "https://res.cloudinary.com/duscymcfc/image/upload/f_auto,q_auto,h_200,w_200/v1/Cocks/k6cdgd0plq1osbdnuitx", matched: false },
+  { src: "https://res.cloudinary.com/duscymcfc/image/upload/f_auto,q_auto,h_200,w_200/v1/Cocks/a2ir2kk4b9ummkvz8hmg", matched: false },
+  { src: "https://res.cloudinary.com/duscymcfc/image/upload/f_auto,q_auto,h_200,w_200/v1/Cocks/zbzsy3z9ohfsurtp5r8p", matched: false },
+  { src: "https://res.cloudinary.com/duscymcfc/image/upload/f_auto,q_auto,h_200,w_200/v1/Cocks/upb371qs5fda4riimerh", matched: false },
+  { src: "https://res.cloudinary.com/duscymcfc/image/upload/f_auto,q_auto,h_200,w_200/v1/Cocks/logo", matched: false },
+  { src: "https://res.cloudinary.com/duscymcfc/image/upload/f_auto,q_auto,h_200,w_200/v1/Cocks/brqp7iaxopw92qxga2is", matched: false },
+  { src: "https://res.cloudinary.com/duscymcfc/image/upload/f_auto,q_auto,h_200,w_200/v1/Cocks/iqi1ysev30t8b8l8z5rn", matched: false },
 ];
 
 const preloadImages = (images) =>

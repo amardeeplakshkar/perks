@@ -38,6 +38,10 @@ const Page = () =>
             {
               setError(data.error);
               toast.error(data.error); // Show toast for error
+              if (data.error === "Internal server error")
+              {
+                tg.close(); // Close the mini app on internal server error
+              }
             } else
             {
               setUser(data || {});
@@ -53,6 +57,10 @@ const Page = () =>
             const errorMsg = "Failed to fetch user data: " + err.message;
             setError(errorMsg);
             toast.error(errorMsg); // Show toast for fetch error
+            if (err.message === "Internal server error")
+            {
+              tg.close(); // Close the mini app on internal server error
+            }
             setLoading(false);
           });
       } else

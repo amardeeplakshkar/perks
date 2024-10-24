@@ -43,17 +43,30 @@ const ReferralSystem: React.FC<ReferralSystemProps> = ({ initData, userId, start
     const checkReferral = async () => {
       if (startParam && userId) {
         try {
-          const response = await fetch('/api/referrals', {
+          // Save the referral first
+          const referralResponse = await fetch('/api/referrals', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId, referrerId: startParam }),
           });
-          if (!response.ok) throw new Error('Failed to save referral');
+
+          if (!referralResponse.ok) throw new Error('Failed to save referral');
+
+          // If referral is saved, add points to the user
+          const pointsResponse = await fetch('/api/add-points', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId, points: 500 }), // 500 points to be added
+          });
+
+          if (!pointsResponse.ok) throw new Error('Failed to add points');
+          console.log('Points added successfully');
         } catch (error) {
-          console.error('Error saving referral:', error);
+          console.error('Error:', error);
         }
       }
     };
+
 
     const fetchReferrals = async () => {
       if (userId) {
