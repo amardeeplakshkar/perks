@@ -56,10 +56,11 @@ const ReferralSystem: React.FC<ReferralSystemProps> = ({ initData, userId, start
           const pointsResponse = await fetch('/api/add-points', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId: referrer, points: 500 }), // 500 points to be added
+            body: JSON.stringify({ userId: startParam, points: 752 }), // 500 points to be added
           });
 
           if (!pointsResponse.ok) throw new Error('Failed to add points');
+
           console.log('Points added successfully');
         } catch (error) {
           console.error('Error:', error);
@@ -103,14 +104,6 @@ const ReferralSystem: React.FC<ReferralSystemProps> = ({ initData, userId, start
     fetchAllData();
   }, [userId, initData, startParam]);
 
-  const handleInviteFriend = () => {
-    const utils = initUtils()
-    const inviteLink = `${INVITE_URL}?startapp=${userId}`
-    const shareText = `Join me on this awesome Telegram mini app!`
-    const fullUrl = `https://t.me/share/url?url=${encodeURIComponent(inviteLink)}&text=${encodeURIComponent(shareText)}`
-    utils.openTelegramLink(fullUrl)
-  }
-
   const handleCopyLink = () => {
     const inviteLink = `${INVITE_URL}?startapp=${userId}`;
     navigator.clipboard.writeText(inviteLink);
@@ -134,12 +127,6 @@ const ReferralSystem: React.FC<ReferralSystemProps> = ({ initData, userId, start
         className="no-interaction"
       />
       <div className="flex flex-col w-full mb-2 space-y-2">
-        <button
-          onClick={handleInviteFriend}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Invite Friend
-        </button>
         <button
           onClick={handleCopyLink}
           className="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
