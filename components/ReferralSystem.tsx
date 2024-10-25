@@ -39,7 +39,7 @@ const ReferralSystem: React.FC<ReferralSystemProps> = ({ initData, userId, start
   const INVITE_URL = "https://t.me/cockscryptobot/start";
 
   useEffect(() => {
-    const checkReferral = async () => {
+   const checkReferral = async () => {
       if (startParam && userId) {
         try {
           const response = await fetch('/api/referrals', {
@@ -52,7 +52,7 @@ const ReferralSystem: React.FC<ReferralSystemProps> = ({ initData, userId, start
           console.error('Error saving referral:', error);
         }
       }
-    };
+   }
 
     const fetchReferrals = async () => {
       if (userId) {
