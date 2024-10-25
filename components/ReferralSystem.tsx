@@ -35,7 +35,6 @@ const getRandomBrightColorClass = () => {
 const ReferralSystem: React.FC<ReferralSystemProps> = ({ initData, userId, startParam }) => {
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [referrer, setReferrer] = useState<Referral | null>(null);
-  const [profilePic, setProfilePic] = useState<string | null>(null); // State for profile picture
   const [loading, setLoading] = useState<boolean>(true);
   const INVITE_URL = "https://t.me/cockscryptobot/start";
 
@@ -43,31 +42,17 @@ const ReferralSystem: React.FC<ReferralSystemProps> = ({ initData, userId, start
     const checkReferral = async () => {
       if (startParam && userId) {
         try {
-          // Save the referral first
-          const referralResponse = await fetch('/api/referrals', {
+          const response = await fetch('/api/referrals', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId, referrerId: startParam }),
           });
-
-          if (!referralResponse.ok) throw new Error('Failed to save referral');
-
-          // If referral is saved, add points to the user
-          const pointsResponse = await fetch('/api/add-points', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId: startParam, points: 752 }), // 500 points to be added
-          });
-
-          if (!pointsResponse.ok) throw new Error('Failed to add points');
-
-          console.log('Points added successfully');
+          if (!response.ok) throw new Error('Failed to save referral');
         } catch (error) {
-          console.error('Error:', error);
+          console.error('Error saving referral:', error);
         }
       }
     };
-
 
     const fetchReferrals = async () => {
       if (userId) {
@@ -83,32 +68,31 @@ const ReferralSystem: React.FC<ReferralSystemProps> = ({ initData, userId, start
       }
     };
 
-    const extractProfilePic = () => {
-      try {
-        const data = JSON.parse(initData);
-        if (data && data.photo_url) {
-          setProfilePic(data.photo_url); // Assuming photo_url is the key for the profile pic
-        }
-      } catch (error) {
-        console.error('Error parsing initData:', error);
-      }
-    };
+    checkReferral();
+    fetchReferrals();
+  }, [userId, startParam])
 
-    const fetchAllData = async () => {
-      await checkReferral();
-      await fetchReferrals();
-      extractProfilePic();
-      setLoading(false); // Set loading to false once all data is fetched
-    };
+  const handleInviteFriend = () => {
+    const utils = initUtils();
+    console.log('utils:', utils); // Check if utils is initialized correctly
+    const inviteLink = `${INVITE_URL}?startapp=${userId}`;
+    const shareText = `Join the fun at @cocks_community . 
+    Lets crow and rule the roost`;
+    const fullUrl = `https://t.me/share/url?url=${encodeURIComponent(inviteLink)}&text=${encodeURIComponent(shareText)}`;
 
-    fetchAllData();
-  }, [userId, initData, startParam]);
+    try {
+      utils.openTelegramLink(fullUrl);
+    } catch (error) {
+      console.error('Error opening Telegram link with SDK:', error);
+      window.open(fullUrl, '_blank'); // Fallback
+    }
+  };
 
   const handleCopyLink = () => {
     const inviteLink = `${INVITE_URL}?startapp=${userId}`;
     navigator.clipboard.writeText(inviteLink);
-    toast.success('Invite link copied to clipboard!');
-  };
+    alert('Invite link copied to clipboard!');
+  }
 
   if (loading) {
     return <Loader />; // Show Loader while data is being fetched
@@ -148,17 +132,7 @@ const ReferralSystem: React.FC<ReferralSystemProps> = ({ initData, userId, start
                     <div
                       className={`h-[3rem] aspect-square rounded-full uppercase flex justify-center items-center ${randomColorClass}`}
                     >
-                      {profilePic ? (
-                        <Image
-                          src={profilePic}
-                          alt="User Profile Picture"
-                          height={150}
-                          width={150}
-                          className="rounded-full"
-                        />
-                      ) : (
-                        <span>{referral.username?.slice(0, 2) || referral.firstName?.slice(0, 2)}</span>
-                      )}
+                      <span>{referral.username?.slice(0, 2) || referral.firstName?.slice(0, 2)}</span>
                     </div>
 
                     <div>

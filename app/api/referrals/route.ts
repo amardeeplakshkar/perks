@@ -42,11 +42,7 @@ export async function POST(request: NextRequest) {
     // Increment the referrer's points by 500 for the new user
     await prisma.user.update({
       where: { telegramId: referrer.telegramId },
-      data: {
-        points: {
-          increment: 500, // Increase points by 500 for referrer
-        },
-      },
+      data: { points: { increment: 500 } },
     });
 
     return NextResponse.json({ success: true, newUser, referrerPoints: referrer.points + 500 });

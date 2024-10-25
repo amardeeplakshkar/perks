@@ -13,46 +13,107 @@ const Page = () =>
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter(); // Initialize Next.js router
+  const [initData, setInitData] = useState('');
+  const [userId, setUserId] = useState('');
+  const [startParam, setStartParam] = useState('');
 
+  // Initialize WebApp and referral system
   useEffect(() =>
   {
-    if (typeof window !== "undefined" && window.Telegram?.WebApp)
+    const initWebApp = async () =>
     {
-      const tg = window.Telegram.WebApp;
-      tg.ready();
-
-      const initDataUnsafe = tg.initDataUnsafe || {};
-
-      if (initDataUnsafe.user)
+      if (typeof window !== 'undefined')
       {
-        fetch("/api/user", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(initDataUnsafe.user),
-        })
-          .then((res) => res.json())
-          .then((data) =>
+        const WebApp = (await import('@twa-dev/sdk')).default;
+        WebApp.ready();
+        const initData = WebApp.initData;
+        const userId = WebApp.initDataUnsafe.user?.id.toString() || '';
+        const startParam = WebApp.initDataUnsafe.start_param || '';
+
+        // Set the state
+        setInitData(initData);
+        setUserId(userId);
+        setStartParam(startParam);
+
+        // Call checkReferral right after setting userId and startParam
+        checkReferral(); // Ensure it's called here to avoid issues with user fetching later
+      }
+    };
+
+    initWebApp();
+  }, []);
+
+  const checkReferral = async () =>
+  {
+    console.log("checkReferral function called"); // Check if it's called
+    if (startParam && userId)
+    {
+      try
+      {
+        console.log("startParam:", startParam, "userId:", userId);
+        // Save the referral first
+        const referralResponse = await fetch('/api/referrals', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, referrerId: startParam }),
+        });
+
+        if (!referralResponse.ok) throw new Error('Failed to save referral');
+
+        // Add points to the referrer
+        const pointsResponse = await fetch('/api/add-points', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: startParam, points: 752 }), // Points to be added
+        });
+
+        if (!pointsResponse.ok) throw new Error('Failed to add points');
+
+        console.log('Points added successfully');
+      } catch (error)
+      {
+        console.error('Error during referral:', error);
+      }
+    }
+  };
+
+
+  // Fetch and initialize user data
+  useEffect(() =>
+  {
+    const fetchUserData = async () =>
+    {
+      if (typeof window !== "undefined" && window.Telegram?.WebApp)
+      {
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+
+        const initDataUnsafe = tg.initDataUnsafe || {};
+
+        if (initDataUnsafe.user)
+        {
+          try
           {
-            console.log("User data received:", data);
-            if (data.error)
-            {
-              setError(data.error);
-              toast.error(data.error); // Show toast for error
-              if (data.error === "Internal server error")
-              {
-                tg.close(); // Close the mini app on internal server error
-              }
-            } else
+            const response = await fetch("/api/user", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(initDataUnsafe.user),
+            });
+
+            const data = await response.json();
+
+            if (response.ok)
             {
               setUser(data || {});
               if (!data.hasClaimedWelcomePoints)
               {
                 router.push("/welcome"); // Redirect to /welcome if points not claimed
               }
+            } else
+            {
+              throw new Error(data.error || "Failed to fetch user data");
             }
-            setLoading(false);
-          })
-          .catch((err) =>
+          } catch (err)
           {
             const errorMsg = "Failed to fetch user data: " + err.message;
             setError(errorMsg);
@@ -61,50 +122,32 @@ const Page = () =>
             {
               tg.close(); // Close the mini app on internal server error
             }
+          } finally
+          {
             setLoading(false);
-          });
+            checkReferral(); // Check referral after fetching user data
+          }
+        } else
+        {
+          const noUserError = "No user data available";
+          setError(noUserError);
+          toast.error(noUserError); // Show toast for no user data
+          setUser({});
+          setLoading(false);
+        }
       } else
       {
-        const noUserError = "No user data available";
-        setError(noUserError);
-        toast.error(noUserError); // Show toast for no user data
-        setUser({});
+        const appError = "This app should be opened in Telegram";
+        setError(appError);
+        toast.error(appError); // Show toast for app error
         setLoading(false);
       }
-    } else
-    {
-      const appError = "This app should be opened in Telegram";
-      setError(appError);
-      toast.error(appError); // Show toast for app error
-      setLoading(false);
-    }
+    };
 
-    if (typeof window !== "undefined")
-    {
-      const links = document.querySelectorAll("[data-href]");
-      links.forEach((link) =>
-      {
-        link.addEventListener("click", (e) =>
-        {
-          e.preventDefault();
-          const href = link.getAttribute("data-href");
-          if (href)
-          {
-            window.open(href, "_self");
-          }
-        });
-      });
-
-      return () =>
-      {
-        links.forEach((link) =>
-        {
-          link.removeEventListener("click", () => { });
-        });
-      };
-    }
+    fetchUserData();
   }, [router]);
 
+  // Game play handler
   const handlePlayGame = async () =>
   {
     if (!user) return;
@@ -184,7 +227,7 @@ const Page = () =>
             <button
               onClick={handlePlayGame}
               disabled={user?.dailyPlays >= 3 || user?.points < 100}
-              className={`gameButton relative h-full w-full rounded-md m-1 flex justify-center items-center font-bold mt-4 px-4 py-2 ${user?.dailyPlays >= 3 || user?.points < 100
+              className={`gameButton relative h - full w - full rounded - md m - 1 flex justify - center items - center font - bold mt - 4 px - 4 py - 2 ${user?.dailyPlays >= 3 || user?.points < 100
                 ? "bg-gray-400 cursor-not-allowed"
                 : " hover:bg-green-600 text-white"
                 }`}
