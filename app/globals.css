@@ -1,8 +1,84 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wdth,wght@0,75..100,300..800;1,75..100,300..800&family=Space+Grotesk:wght@300..700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+body {
+  font-family: "Open Sans", sans-serif;
+  font-optical-sizing: auto;
+}
+
+@layer base {
+  :root {
+    --background: 60 0% 0%;
+    --foreground: 60 9.1% 97.8%;
+    --card: 20 14.3% 4.1%;
+    --card-foreground: 60 9.1% 97.8%;
+    --popover: 20 14.3% 4.1%;
+    --popover-foreground: 60 9.1% 97.8%;
+    --primary: 60 9.1% 97.8%;
+    --primary-foreground: 24 9.8% 10%;
+    --secondary: 12 6.5% 15.1%;
+    --secondary-foreground: 60 9.1% 97.8%;
+    --muted: 12 6.5% 15.1%;
+    --muted-foreground: 24 5.4% 63.9%;
+    --accent: 12 6.5% 15.1%;
+    --accent-foreground: 60 9.1% 97.8%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 60 9.1% 97.8%;
+    --border: 12 6.5% 15.1%;
+    --input: 12 6.5% 15.1%;
+    --ring: 24 5.7% 82.9%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+
+.btns-con .btn-item.comunity {
+  position: relative;
+  border: 1px solid hsla(0, 0%, 100%, .25);
+  text-align: center;
+  color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+ .btns-con .btn-item {
+  min-height: 50px;
+  width: 100%;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid hsla(0, 0%, 100%, .1);
+  background: #151516/30;
+  color: #fff;
+  margin-bottom: 12px;
+  padding: 0 24px 0 12px;
+}
+
+
+Image,
+img{
+  pointer-events: none;
+  user-select: none;
+}
 * {
   -webkit-touch-callout: none; 
   -webkit-user-select: none; 
@@ -11,113 +87,39 @@
   user-select: none; 
 }
 html {
-  touch-action: manipulation; /* Prevent zoom from double-tap gestures */
+  touch-action: manipulation;
 }
 .no-interaction {
   pointer-events: none;
   user-select: none;
 }
-.user-none{
-  user-select: none;
-}
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes shine {
+  0%,
+  80% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(300%);
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: "Poppins", sans-serif;
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-}   
-.w-4em{
-    width: 4em;
-    aspect-ratio: 1;
-}
-.container {
-  display: flex;
-  flex-direction: column;
-  width: 100dvw;
-  align-items: center;
-  justify-content: center;
-}
-
-h1 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-}
-
-button {
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-.stats>div{
-  width: 5rem;
-  aspect-ratio: 1;
-}
-
-.cardGrid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-}
-
-.card {
+.shine-effect {
   position: relative;
-  width: 3rem;
-  aspect-ratio: 3 / 4;
-  perspective: 1000px;
+  overflow: hidden;
 }
 
-.card div {
+.shine-effect::after {
+  content: "";
   position: absolute;
-  width: 100%;
+  top: 0;
+  left: 0;
+  width: 30%;
   height: 100%;
-  transition: transform 0.6s;
-  transform-style: preserve-3d;
-}
-
-.card .flipped {
-  transform: rotateY(180deg);
-}
-
-.front,
-.back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  border-radius: 10px;
-}
-
-.front {
-  transform: rotateY(180deg);
-}
-
-.back {
-  background-color: #333;
-  cursor: pointer;
-}
-.gameButton{
-  background-image:url("https://res.cloudinary.com/duscymcfc/image/upload/v1729001765/Bg.jpg");
-  background-size: cover; /* Ensures the image covers the entire area */
-  background-position: center; /* Centers the image */
-  background-repeat: no-repeat; /* Prevents tiling */
-  height: 100%;
-  width: 100%;
+  background: linear-gradient(to right,
+      transparent 0%,
+      rgba(0, 122, 255, 0.3) 50%,
+      transparent 100%);
+  animation: shine 4s infinite;
 }

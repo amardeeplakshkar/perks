@@ -1,8 +1,13 @@
-import Page from "../components/WelcomeSlider";
+"use client"
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 export default function Home() {
-  return (
-    <>
-      <Page />
-    </>
-  );
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push("/dashboard");
+  }, [router]);
+
+  return null; 
 }
